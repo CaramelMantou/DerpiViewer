@@ -34,6 +34,7 @@ class DbHelper {
             thumbtiny VARCHAR(64),
             format VARCHAR(32),
             tags TEXT,
+            tagids TEXT,
             description TEXT,
             createdat VARCHAR(64),
             duration DOUBLE,
@@ -79,7 +80,7 @@ class DbHelper {
       } else {
         int id = await database.insert(
           "favourites",
-          image.toJson(booru),
+          image.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
         log("Favourite $id");

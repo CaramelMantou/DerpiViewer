@@ -16,6 +16,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/fav_model.dart';
 
@@ -247,7 +248,7 @@ class HomeDrawer extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'Author: ',
                             style: TextStyle(fontWeight: FontWeight.bold),
@@ -260,8 +261,16 @@ class HomeDrawer extends StatelessWidget {
                             'Github Repository: ',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text(
+                          SelectableText(
                             'https://github.com/CaramelMantou/derpiviewer',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: Colors.blue,
+                            ),
+                            onTap: () {
+                              launchUrl(Uri.parse(
+                                  'https://github.com/CaramelMantou/derpiviewer'));
+                            },
                           )
                         ],
                       ),

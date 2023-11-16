@@ -29,6 +29,7 @@ class ChangeBooruDialog extends StatelessWidget {
           onPressed: () {
             pref.changeHost(Booru.values[idx]);
             Fluttertoast.showToast(
+                toastLength: Toast.LENGTH_LONG,
                 msg: AppLocalizations.of(context)!.drawer1n1(text));
             Navigator.pop(context, null);
           },

@@ -7,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailSheet extends StatefulWidget {
   ImageResponse image;
@@ -19,10 +21,12 @@ class DetailSheet extends StatefulWidget {
 class _DetailSheetState extends State<DetailSheet> {
   late ImageResponse _image;
   late List<String> _tags;
+  late List<int> _tagids;
   @override
   void initState() {
     _image = widget.image;
     _tags = _image.tags;
+    _tagids = _image.tagids;
     super.initState();
   }
 
@@ -47,11 +51,12 @@ class _DetailSheetState extends State<DetailSheet> {
                 )))),
         Align(
             alignment: Alignment.centerLeft,
-            child:
-                Text(_image.uploader == "" ? "Unknown Pony" : _image.uploader,
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ))),
+            child: Text(
+                _image.uploader == "" ? "Background Pony" : _image.uploader,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 40, 135, 203)))),
         Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -61,7 +66,39 @@ class _DetailSheetState extends State<DetailSheet> {
         const SizedBox(
           height: 8,
         ),
-        Text(_image.description),
+        MarkdownBody(
+            selectable: true,
+            onTapLink: (text, href, title) async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(AppLocalizations.of(context)!.toolbar4n3t),
+                    content: Text(AppLocalizations.of(context)!.toolbar4n3d),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(AppLocalizations.of(context)!.toolbar4n3o1),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          if (await canLaunchUrl(Uri.parse(href ?? ""))) {
+                            await launchUrl(Uri.parse(href ?? ""));
+                          } else {
+                            return;
+                          }
+                        },
+                      ),
+                      TextButton(
+                        child: Text(AppLocalizations.of(context)!.toolbar4n3o2),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            data: _image.description == ""
+                ? "No description"
+                : _image.description),
         const SizedBox(
           height: 16,
         ),
@@ -141,7 +178,8 @@ class _DetailSheetState extends State<DetailSheet> {
             spacing: 8.0, // 水平方向上的间距
             runSpacing: 4.0, // 垂直方向上的间距
             children: List<Widget>.generate(_tags.length, (index) {
-              var tc = getTagCategory(_tags[index]);
+              var tc =
+                  getTagCategory(_tags[index], _tagids[index], _image.booru);
               return GestureDetector(
                   onTap: () {
                     appendClipboard(

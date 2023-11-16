@@ -35,7 +35,9 @@ class TrendingModel extends SearchInterface {
           page: page,
           perPage: params.perPage,
           sortDirection: ConstStrings.sds[SortDirection.desc.index],
-          sortField: ConstStrings.sfs[SortField.wilsonScore.index]);
+          // sortDirection: ConstStrings.sds[params.sortDirection.index],
+          sortField: ConstStrings.sfs[params.sortField.index]);
+      // sortField: ConstStrings.sfs[SortField.wilsonScore.index]);
       if (more.isEmpty) {
         over = true;
         return;

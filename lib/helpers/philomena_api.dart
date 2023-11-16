@@ -4,11 +4,13 @@ import 'package:derpiviewer/enums.dart';
 import 'package:derpiviewer/helpers/connect.dart';
 
 Future<ImageResponse> fetchImage(
-    {required String booru, required int id, String? key}) async {
+    {required Booru booru, required int id, String? key}) async {
   Map<String, dynamic> params = {"key": key ?? ""};
   var data = await getData(
-      booru: booru, path: "/api/v1/json/images/$id", params: params);
-  return ImageResponse.fromJson(data["image"]);
+      booru: ConstStrings.boorus[booru] ?? ConstStrings.defaultHost,
+      path: "/api/v1/json/images/$id",
+      params: params);
+  return ImageResponse.fromJson(data["image"], booru);
 }
 
 Future<ImageResponse> fetchFeaturedImage(
@@ -24,7 +26,7 @@ Future<ImageResponse> fetchFeaturedImage(
   } else {
     image = data["image"];
   }
-  return ImageResponse.fromJson(image);
+  return ImageResponse.fromJson(image, booru);
 }
 
 Future<List<ImageResponse>> fetchImages(
@@ -56,13 +58,15 @@ Future<List<ImageResponse>> fetchImages(
   } else {
     images = data["images"];
   }
-  List<ImageResponse> res =
-      images.map((e) => ImageResponse.fromJson(e)).toList(growable: false);
+  List<ImageResponse> res = images
+      .map((e) => ImageResponse.fromJson(e, booru))
+      .toList(growable: false);
   return res;
 }
 
 class ImageResponse {
   late int id;
+  late Booru booru;
   late String fullUrl;
   late String smallUrl;
   late String mediumUrl;
@@ -72,6 +76,7 @@ class ImageResponse {
   late String thumbTinyUrl;
   late ContentFormat format;
   late List<String> tags;
+  late List<int> tagids;
   late String description;
   late String createdAt;
   late double duration;
@@ -84,6 +89,7 @@ class ImageResponse {
 
   ImageResponse(
       this.id,
+      this.booru,
       this.fullUrl,
       this.smallUrl,
       this.mediumUrl,
@@ -92,6 +98,7 @@ class ImageResponse {
       this.thumbSmallUrl,
       this.thumbTinyUrl,
       this.tags,
+      this.tagids,
       this.format,
       this.description,
       this.createdAt,
@@ -102,8 +109,9 @@ class ImageResponse {
       this.faves,
       this.uploader,
       this.sourceUrls);
-  ImageResponse.fromJson(Map<String, dynamic> obj) {
+  ImageResponse.fromJson(Map<String, dynamic> obj, Booru booru) {
     id = obj["id"];
+    this.booru = booru;
     fullUrl = obj["representations"]["full"];
     smallUrl = obj["representations"]["small"];
     mediumUrl = obj["representations"]["medium"];
@@ -133,6 +141,7 @@ class ImageResponse {
     }
     format = ContentFormat.values[ConstStrings.format.indexOf(obj["format"])];
     tags = List<String>.from(obj["tags"]);
+    tagids = List<int>.from(obj["tag_ids"]);
     description = obj["description"];
     createdAt = obj["created_at"];
     duration = obj["duration"];
@@ -145,6 +154,7 @@ class ImageResponse {
   }
   ImageResponse.fromDbQueries(Map<String, dynamic> obj) {
     id = obj["id"];
+    booru = Booru.values[obj["booru"]];
     fullUrl = obj["full"];
     smallUrl = obj["small"];
     mediumUrl = obj["medium"];
@@ -154,6 +164,7 @@ class ImageResponse {
     thumbTinyUrl = obj["thumbtiny"];
     format = ContentFormat.values[ConstStrings.format.indexOf(obj["format"])];
     tags = List<String>.from(const JsonDecoder().convert(obj["tags"]));
+    tagids = List<int>.from(const JsonDecoder().convert(obj["tagids"]));
     description = obj["description"];
     createdAt = obj["createdat"];
     duration = obj["duration"];
@@ -166,7 +177,7 @@ class ImageResponse {
   }
 
   //to json
-  Map<String, dynamic> toJson(Booru booru) => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "booru": booru.index,
         "full": fullUrl,
@@ -178,6 +189,7 @@ class ImageResponse {
         "thumbtiny": thumbTinyUrl,
         "format": ConstStrings.format[format.index],
         "tags": const JsonEncoder().convert(tags),
+        "tagids": const JsonEncoder().convert(tagids),
         "description": description,
         "createdat": createdAt,
         "duration": duration,

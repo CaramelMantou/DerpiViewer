@@ -118,13 +118,14 @@ class _VideoViewState extends State<VideoView> {
   Widget build(BuildContext context) {
     return _videoPlayerController.value.isInitialized
         ? Stack(children: <Widget>[
-            Align(
-                alignment: Alignment.center,
-                child: Center(
-                    child: AspectRatio(
-                  aspectRatio: _videoPlayerController.value.aspectRatio,
-                  child: VideoPlayer(_videoPlayerController),
-                ))),
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Center(
+                  child: AspectRatio(
+                aspectRatio: _videoPlayerController.value.aspectRatio,
+                child: VideoPlayer(_videoPlayerController),
+              )),
+              _buildSlider(),
+            ]),
             Align(
               alignment: Alignment.center,
               child: PauseAnim(tapCallback: () {
@@ -134,7 +135,7 @@ class _VideoViewState extends State<VideoView> {
                   _videoPlayerController.play();
                 }
               }),
-            )
+            ),
           ])
         : const Center(child: CircularProgressIndicator());
   }
@@ -143,6 +144,21 @@ class _VideoViewState extends State<VideoView> {
   void dispose() {
     _videoPlayerController.dispose();
     super.dispose();
+  }
+
+  Slider _buildSlider() {
+    return Slider(
+      value: _videoPlayerController.value.position.inSeconds.toDouble(),
+      min: 0.0,
+      max: _videoPlayerController.value.duration.inSeconds.toDouble(),
+      onChangeStart: (start) => _videoPlayerController.pause(),
+      onChangeEnd: (end) => _videoPlayerController.play(),
+      onChanged: (double value) {
+        setState(() {
+          _videoPlayerController.seekTo(Duration(seconds: value.toInt()));
+        });
+      },
+    );
   }
 }
 
@@ -166,31 +182,31 @@ class _PauseAnimState extends State<PauseAnim> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-        dimension: 400.0,
-        child: GestureDetector(
+    return GestureDetector(
+      child: SizedBox.square(
+          dimension: 400.0,
           child: AnimatedOpacity(
             opacity: _visible ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 1000),
             child: _isPlaying
                 ? const Icon(
-                    Icons.pause,
+                    Icons.play_arrow,
                     size: 100,
                     color: Colors.white,
                   )
                 : const Icon(
-                    Icons.play_arrow,
+                    Icons.pause,
                     size: 100,
                     color: Colors.white,
                   ),
-          ),
-          onTap: () {
-            _isPlaying = !_isPlaying;
-            _visible = !_visible;
-            setState(() {
-              _tapCallback();
-            });
-          },
-        ));
+          )),
+      onTap: () {
+        _isPlaying = !_isPlaying;
+        _visible = !_visible;
+        setState(() {
+          _tapCallback();
+        });
+      },
+    );
   }
 }

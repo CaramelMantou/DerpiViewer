@@ -7,7 +7,7 @@ void appendClipboard(String local, String text) async {
   Fluttertoast.showToast(msg: "$local \"$text\"");
 }
 
-TagCategory getTagCategory(String tag) {
+TagCategory getTagCategory(String tag, int tagid, Booru booru) {
   if (ConstStrings.ratingTags.contains(tag)) return TagCategory.rating;
   if (ConstStrings.bodyTags.contains(tag)) return TagCategory.body;
   if (ConstStrings.errorTags.contains(tag)) return TagCategory.error;

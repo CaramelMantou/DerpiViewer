@@ -50,6 +50,8 @@ dependencies:
   input_history_text_field: ^0.2.0
   sqflite: any
   path_provider: ^2.1.1
+  flutter_markdown: any
+  url_launcher: any
   # flutter_tags: ^1.0.0-nullsafety.1
 dev_dependencies:
   flutter_test:
