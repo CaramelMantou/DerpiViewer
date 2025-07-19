@@ -6,7 +6,7 @@ import 'package:derpiviewer/widgets/detail.dart';
 import 'package:derpiviewer/widgets/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 
 class GalleryToolBar extends StatelessWidget {
   final SearchInterface model;

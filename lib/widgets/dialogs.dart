@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:derpiviewer/enums.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 
 class ChangeBooruDialog extends StatelessWidget {
   final PrefModel pref;

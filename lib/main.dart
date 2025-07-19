@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/trending_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

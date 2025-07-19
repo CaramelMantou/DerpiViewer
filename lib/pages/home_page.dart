@@ -15,7 +15,7 @@ import "package:derpiviewer/widgets/dialogs.dart";
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/fav_model.dart';
@@ -34,7 +34,7 @@ class _MyHomePageState extends State<HomePage> {
         _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
       String id = data[0];
-      DownloadTaskStatus status = data[1];
+      DownloadTaskStatus status = DownloadTaskStatus.fromInt(data[1]);
       int progress = data[2];
       if (status == DownloadTaskStatus.complete) {
         Fluttertoast.showToast(msg: "Downloaded");
@@ -51,8 +51,7 @@ class _MyHomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
     send.send([id, status, progress]);
