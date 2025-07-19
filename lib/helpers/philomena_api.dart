@@ -150,7 +150,7 @@ class ImageResponse {
     comments = obj["comment_count"];
     faves = obj["faves"];
     uploader = obj["uploader"] ?? "";
-    sourceUrls = List<String>.from(obj["source_urls"]);
+    sourceUrls = List<String>.from(obj["source_urls"] ?? []);
   }
   ImageResponse.fromDbQueries(Map<String, dynamic> obj) {
     id = obj["id"];
