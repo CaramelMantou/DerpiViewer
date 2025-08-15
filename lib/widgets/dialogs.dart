@@ -1,9 +1,11 @@
+import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/enums.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:derpiviewer/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChangeBooruDialog extends StatelessWidget {
   final PrefModel pref;
@@ -13,7 +15,7 @@ class ChangeBooruDialog extends StatelessWidget {
     Map<Booru, String> boorus = ConstStrings.boorus;
     int booruNum = boorus.length;
     return SimpleDialog(
-      title: Text(AppLocalizations.of(context)!.drawer1t),
+      title: Text(AppLocalizations.of(context)!.drawerBooruTitle),
       children: <Widget>[
         for (var i = 0; i < booruNum; i++)
           generateOption(boorus[Booru.values[i]] ?? "", context, i)
@@ -30,7 +32,8 @@ class ChangeBooruDialog extends StatelessWidget {
             pref.changeHost(Booru.values[idx]);
             Fluttertoast.showToast(
                 toastLength: Toast.LENGTH_LONG,
-                msg: AppLocalizations.of(context)!.drawer1n1(text));
+                msg: AppLocalizations.of(context)!
+                    .drawerBooruSwitchMessage(text));
             Navigator.pop(context, null);
           },
           child: Padding(
@@ -55,61 +58,82 @@ class ChangeParamDialog extends StatelessWidget {
     return Consumer<PrefModel>(builder: ((context, pref, child) {
       Map<String, int> curFilters = ConstStrings.filters[pref.booru]!;
       return SimpleDialog(
-        title: Text(AppLocalizations.of(context)!.drawer2t),
+        title: Text(AppLocalizations.of(context)!.drawerSearchTitle),
         children: [
+          // 排序方向下拉菜单
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<SortDirection>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.arrow_upward),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer2i1t),
-                  items: [
-                    for (SortDirection i in SortDirection.values)
-                      DropdownMenuItem<SortDirection>(
-                        value: i,
-                        child: Text(ConstStrings.getSds(context, i)),
-                      )
-                  ],
-                  value: pref.params.sortDirection,
-                  onChanged: ((value) {
-                    pref.updateParams(sd: value);
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<SortDirection>(
+              leadingIcon: const Icon(Icons.sort),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label:
+                  Text(AppLocalizations.of(context)!.drawerSearchSortDirection),
+              initialSelection: pref.params.sortDirection,
+              onSelected: (value) {
+                if (value != null) {
+                  pref.updateParams(sd: value);
+                }
+              },
+              dropdownMenuEntries: [
+                for (SortDirection i in SortDirection.values)
+                  DropdownMenuEntry<SortDirection>(
+                    value: i,
+                    label: ConstStrings.getSds(context, i),
+                  )
+              ],
+            ),
+          ),
+
+          // 排序字段下拉菜单
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<SortField>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.sort),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer2i2t),
-                  items: [
-                    for (SortField i in SortField.values)
-                      DropdownMenuItem<SortField>(
-                        value: i,
-                        child: Text(ConstStrings.getSfs(context, i)),
-                      )
-                  ],
-                  value: pref.params.sortField,
-                  onChanged: ((value) {
-                    pref.updateParams(sf: value);
-                    Navigator.pop(context, null);
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<SortField>(
+              leadingIcon: const Icon(Icons.filter_list),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSearchSortField),
+              initialSelection: pref.params.sortField,
+              onSelected: (value) {
+                if (value != null) {
+                  pref.updateParams(sf: value);
+                  Navigator.pop(context, null);
+                }
+              },
+              dropdownMenuEntries: [
+                for (SortField i in SortField.values)
+                  DropdownMenuEntry<SortField>(
+                    value: i,
+                    label: ConstStrings.getSfs(context, i),
+                  )
+              ],
+            ),
+          ),
+
+          // 过滤器下拉菜单
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.filter_alt),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer2i3t),
-                  value: pref.params.filterName,
-                  items: [
-                    for (String s in curFilters.keys)
-                      DropdownMenuItem(value: s, child: Text(s))
-                  ],
-                  onChanged: ((value) {
-                    pref.updateParams(fid: curFilters[value], fn: value);
-                    Navigator.pop(context, null);
-                  })))
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<String>(
+              leadingIcon: const Icon(Icons.filter_alt),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSearchFilter),
+              initialSelection: pref.params.filterName,
+              onSelected: (value) {
+                if (value != null) {
+                  pref.updateParams(fid: curFilters[value], fn: value);
+                  Navigator.pop(context, null);
+                }
+              },
+              dropdownMenuEntries: [
+                for (String s in curFilters.keys)
+                  DropdownMenuEntry<String>(
+                    value: s,
+                    label: s,
+                  )
+              ],
+            ),
+          ),
         ],
       );
     }));
@@ -123,97 +147,119 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PrefModel>(builder: ((context, pref, child) {
       return SimpleDialog(
-        title: Text(AppLocalizations.of(context)!.drawer3t),
+        title: Text(AppLocalizations.of(context)!.drawerSizeTitle),
         children: [
+          // 图片预览大小
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<Size>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.image),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer3i1t),
-                  items: const [
-                    DropdownMenuItem<Size>(
-                      value: Size.full,
-                      child: Text("Full"),
-                    ),
-                    DropdownMenuItem<Size>(
-                      value: Size.large,
-                      child: Text("Large"),
-                    )
-                  ],
-                  value: pref.imageSize,
-                  onChanged: ((value) {
-                    pref.imageSize = value ?? pref.imageSize;
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<Size>(
+              leadingIcon: const Icon(Icons.photo_library),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSizePreviewImage),
+              initialSelection: pref.imageSize,
+              onSelected: (value) {
+                if (value != null) pref.imageSize = value;
+              },
+              dropdownMenuEntries: const [
+                DropdownMenuEntry<Size>(
+                  value: Size.full,
+                  label: "Full",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.large,
+                  label: "Large",
+                )
+              ],
+            ),
+          ),
+          // 视频预览大小
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<Size>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.video_file),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer3i2t),
-                  items: const [
-                    DropdownMenuItem<Size>(
-                      value: Size.full,
-                      child: Text("Full"),
-                    ),
-                    DropdownMenuItem<Size>(
-                      value: Size.medium,
-                      child: Text("Medium"),
-                    )
-                  ],
-                  value: pref.videoSize,
-                  onChanged: ((value) {
-                    pref.videoSize = value ?? pref.videoSize;
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<Size>(
+              leadingIcon: const Icon(Icons.video_library),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSizePreviewVideo),
+              initialSelection: pref.videoSize,
+              onSelected: (value) {
+                if (value != null) pref.videoSize = value;
+              },
+              dropdownMenuEntries: const [
+                DropdownMenuEntry<Size>(
+                  value: Size.full,
+                  label: "Full",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.large,
+                  label: "Large",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.medium,
+                  label: "Medium",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.small,
+                  label: "Small",
+                ),
+              ],
+            ),
+          ),
+          // 下载大小
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<Size>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.download),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer3i3t),
-                  items: const [
-                    DropdownMenuItem<Size>(
-                      value: Size.full,
-                      child: Text("Full"),
-                    ),
-                    DropdownMenuItem<Size>(
-                      value: Size.large,
-                      child: Text("Large"),
-                    )
-                  ],
-                  value: pref.downloadSize,
-                  onChanged: ((value) {
-                    pref.downloadSize = value ?? pref.downloadSize;
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<Size>(
+              leadingIcon: const Icon(Icons.download),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSizeDownload),
+              initialSelection: pref.downloadSize,
+              onSelected: (value) {
+                if (value != null) pref.downloadSize = value;
+              },
+              dropdownMenuEntries: const [
+                DropdownMenuEntry<Size>(
+                  value: Size.full,
+                  label: "Full",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.large,
+                  label: "Large",
+                )
+              ],
+            ),
+          ),
+          // 分享大小
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<Size>(
-                  decoration: InputDecoration(
-                      icon: const Icon(Icons.share),
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.drawer3i4t),
-                  items: const [
-                    DropdownMenuItem<Size>(
-                      value: Size.full,
-                      child: Text("Full"),
-                    ),
-                    DropdownMenuItem<Size>(
-                      value: Size.large,
-                      child: Text("Large"),
-                    ),
-                    DropdownMenuItem<Size>(
-                      value: Size.medium,
-                      child: Text("Medium"),
-                    )
-                  ],
-                  value: pref.shareSize,
-                  onChanged: ((value) {
-                    pref.shareSize = value ?? pref.shareSize;
-                    Navigator.pop(context, null);
-                  }))),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: DropdownMenu<Size>(
+              leadingIcon: const Icon(Icons.share),
+              width: MediaQuery.of(context).size.width * 0.7,
+              label: Text(AppLocalizations.of(context)!.drawerSizeShare),
+              initialSelection: pref.shareSize,
+              onSelected: (value) {
+                if (value != null) {
+                  pref.shareSize = value;
+                  Navigator.pop(context, null);
+                }
+              },
+              dropdownMenuEntries: const [
+                DropdownMenuEntry<Size>(
+                  value: Size.full,
+                  label: "Full",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.large,
+                  label: "Large",
+                ),
+                DropdownMenuEntry<Size>(
+                  value: Size.medium,
+                  label: "Medium",
+                )
+              ],
+            ),
+          ),
         ],
       );
     }));
@@ -229,7 +275,7 @@ class ChangeKeyDialog extends StatelessWidget {
       TextEditingController textController =
           TextEditingController(text: pref.key);
       return SimpleDialog(
-        title: Text(AppLocalizations.of(context)!.drawer4t),
+        title: Text(AppLocalizations.of(context)!.drawerApiTitle),
         children: [
           Padding(
               padding: const EdgeInsets.all(16.0),
@@ -251,7 +297,7 @@ class ChangeKeyDialog extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
               child: Text(
-                AppLocalizations.of(context)!.drawer4i1t,
+                AppLocalizations.of(context)!.drawerApiHint,
                 style: const TextStyle(fontSize: 12),
               )),
           const Padding(
@@ -263,5 +309,129 @@ class ChangeKeyDialog extends StatelessWidget {
         ],
       );
     }));
+  }
+}
+
+class ClearCacheDialog extends StatelessWidget {
+  const ClearCacheDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text('清除缓存'),
+      children: [
+        ListTile(
+          title: const Text('清除图片缓存'),
+          leading: const Icon(Icons.image),
+          onTap: () async {
+            await ImageCacheManager().emptyCache();
+            Fluttertoast.showToast(msg: '图片缓存已清除');
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: const Text('清除视频缓存'),
+          leading: const Icon(Icons.video_library),
+          onTap: () async {
+            await VideoCacheManager().emptyCache();
+            Fluttertoast.showToast(msg: '视频缓存已清除');
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: const Text('清除所有缓存'),
+          leading: const Icon(Icons.delete),
+          onTap: () async {
+            ImageCacheManager().emptyCache();
+            await VideoCacheManager().emptyCache();
+            Fluttertoast.showToast(msg: '所有缓存已清除');
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class CustomAboutDialog extends StatelessWidget {
+  const CustomAboutDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: Theme.of(context).textTheme.copyWith(
+              headlineSmall: const TextStyle(
+                color: Colors.blue, // 设置 applicationName 的字体颜色
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+      ),
+      child: AboutDialog(
+        applicationName: 'DerpiViewer',
+        applicationVersion: '1.0.0',
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Author:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('CaramelMantou@github'),
+                const SizedBox(height: 8),
+                const Text('Github Repository:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                SelectableText(
+                  'https://github.com/CaramelMantou/derpiviewer',
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                  ),
+                  onTap: () {
+                    launchUrl(Uri.parse(
+                        'https://github.com/CaramelMantou/derpiviewer'));
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ChangeSlideIntervalDialog extends StatelessWidget {
+  final PrefModel pref;
+  const ChangeSlideIntervalDialog({super.key, required this.pref});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('设置幻灯片间隔'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('当前间隔: ${pref.slideInterval}秒'),
+          Slider(
+            value: pref.slideInterval.toDouble(),
+            min: 1,
+            max: 30,
+            divisions: 29,
+            label: '${pref.slideInterval}秒',
+            onChanged: (value) {
+              pref.setSlideInterval(value.round());
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('确定'),
+        ),
+      ],
+    );
   }
 }

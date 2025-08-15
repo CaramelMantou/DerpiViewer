@@ -1,7 +1,7 @@
 import 'dart:developer';
 
+import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/search_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
@@ -93,8 +93,6 @@ class FavModel extends SearchInterface {
         return results[index].thumbSmallUrl;
       case Size.thumbTiny:
         return results[index].thumbTinyUrl;
-      default:
-        return "";
     }
   }
 
@@ -106,5 +104,25 @@ class FavModel extends SearchInterface {
   @override
   PrefModel getPref() {
     return prefModel;
+  }
+
+  @override
+  String getItemMediumThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].smallUrl;
+    } else {
+      return results[index].mediumUrl;
+    }
+  }
+
+  @override
+  String getItemThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].thumbUrl;
+    } else {
+      return results[index].smallUrl;
+    }
   }
 }

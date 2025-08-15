@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/helpers/db.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/trending_model.dart';
@@ -16,7 +17,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:derpiviewer/l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/fav_model.dart';
 
@@ -140,9 +140,12 @@ class _TrendingScrollState extends State<TrendingScroll> {
                         imageUrl: trending.featured?.mediumUrl ??
                             ConstStrings.fallbackImg,
                         fit: BoxFit.cover,
+                        cacheManager: ImageCacheManager(),
                       )),
-                  const Divider(),
                 ]))),
+        const SliverToBoxAdapter(
+          child: SizedBox(height: 8.0), // 可以调整高度值
+        ),
         Consumer<TrendingModel>(
             builder: ((context, value, child) => ImageGrid(
                   model: value,
@@ -169,7 +172,7 @@ class HomeDrawer extends StatelessWidget {
         child: Column(
       children: [
         DrawerHeader(
-          decoration: const BoxDecoration(color: Colors.white),
+          decoration: const BoxDecoration(),
           child: SizedBox.expand(
               child: CachedNetworkImage(
             imageUrl: "https://derpicdn.net/img/2015/9/26/988523/medium.png",
@@ -178,10 +181,12 @@ class HomeDrawer extends StatelessWidget {
         ),
         Consumer<PrefModel>(
             builder: ((context, pref, child) => ListTile(
-                  title: Text(AppLocalizations.of(context)!.drawer1t),
+                  title: Text(AppLocalizations.of(context)!.drawerBooruTitle),
                   subtitle: Text(
-                      "${AppLocalizations.of(context)!.drawer1d} ${ConstStrings.boorus[pref.booru]}",
-                      style: const TextStyle(fontSize: 12.0)),
+                    "${AppLocalizations.of(context)!.drawerBooruDescription} ${ConstStrings.boorus[pref.booru]}",
+                    // style:
+                    //     const TextStyle(fontSize: 12.0, color: Colors.white)
+                  ),
                   leading: const Icon(Icons.image),
                   onTap: () async {
                     showDialog(
@@ -194,8 +199,8 @@ class HomeDrawer extends StatelessWidget {
                   },
                 ))),
         ListTile(
-          title: Text(AppLocalizations.of(context)!.drawer2t),
-          subtitle: Text(AppLocalizations.of(context)!.drawer2d,
+          title: Text(AppLocalizations.of(context)!.drawerSearchTitle),
+          subtitle: Text(AppLocalizations.of(context)!.drawerSearchDescription,
               style: const TextStyle(fontSize: 12.0)),
           leading: const Icon(Icons.settings),
           onTap: () async {
@@ -207,8 +212,8 @@ class HomeDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: Text(AppLocalizations.of(context)!.drawer3t),
-          subtitle: Text(AppLocalizations.of(context)!.drawer3d,
+          title: Text(AppLocalizations.of(context)!.drawerSizeTitle),
+          subtitle: Text(AppLocalizations.of(context)!.drawerSizeDescription,
               style: const TextStyle(fontSize: 12.0)),
           leading: const Icon(Icons.settings),
           onTap: () async {
@@ -220,8 +225,8 @@ class HomeDrawer extends StatelessWidget {
           },
         ),
         // ListTile(
-        //     title: Text(AppLocalizations.of(context)!.drawer4t),
-        //     subtitle: Text(AppLocalizations.of(context)!.drawer4d,
+        //     title: Text(AppLocalizations.of(context)!.drawerApiTitle),
+        //     subtitle: Text(AppLocalizations.of(context)!.drawerApiDescription,
         //         style: TextStyle(fontSize: 12.0)),
         //     leading: const Icon(Icons.key),
         //     onTap: () async {
@@ -232,53 +237,85 @@ class HomeDrawer extends StatelessWidget {
         //           });
         //     }),
         ListTile(
+          title: const Text('清除缓存'),
+          subtitle: const Text('清除图片和视频缓存', style: TextStyle(fontSize: 12.0)),
+          leading: const Icon(Icons.cached),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const ClearCacheDialog();
+              },
+            );
+          },
+        ),
+        ListTile(
           title: const Text('关于'),
           leading: const Icon(Icons.info),
           onTap: () {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AboutDialog(
-                  applicationName: 'DerpiViewer',
-                  applicationVersion: '1.0.0',
-                  children: [
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Author: ',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'CaramelMantou@github',
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Github Repository: ',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SelectableText(
-                            'https://github.com/CaramelMantou/derpiviewer',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.blue,
-                            ),
-                            onTap: () {
-                              launchUrl(Uri.parse(
-                                  'https://github.com/CaramelMantou/derpiviewer'));
-                            },
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                return const CustomAboutDialog();
+              },
+            );
+          },
+        ),
+        ListTile(
+          title: const Text('单列模式'),
+          leading: const Icon(Icons.view_column),
+          trailing: Consumer<PrefModel>(
+            builder: (context, pref, child) => Switch(
+              value: pref.isSingleColumn,
+              onChanged: (value) => pref.toggleSingleColumn(),
+            ),
+          ),
+          onTap: () {
+            Provider.of<PrefModel>(context, listen: false).toggleSingleColumn();
+          },
+        ),
+        // 添加幻灯片间隔设置
+        ListTile(
+          title: const Text('幻灯片间隔'),
+          leading: const Icon(Icons.slideshow),
+          subtitle: Consumer<PrefModel>(
+            builder: (context, pref, child) => Text('${pref.slideInterval}秒'),
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return ChangeSlideIntervalDialog(
+                  pref: Provider.of<PrefModel>(context, listen: false),
                 );
               },
             );
           },
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '夜间模式',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  Consumer<PrefModel>(
+                    builder: (context, pref, child) => Switch(
+                      value: pref.isDarkMode,
+                      onChanged: (value) => pref.toggleDarkMode(),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     ));

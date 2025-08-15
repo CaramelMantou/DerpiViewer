@@ -45,10 +45,12 @@ class GalleryToolBar extends StatelessWidget {
                         favController.toggleFav();
                         if (favController.value) {
                           Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!.toolbar1n1);
+                              msg: AppLocalizations.of(context)!
+                                  .toolbarFavAdded);
                         } else {
                           Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!.toolbar1n2);
+                              msg: AppLocalizations.of(context)!
+                                  .toolbarFavRemoved);
                         }
                         DbHelper.putFavorite(model.getBooru(),
                             model.getItem(index), favController.value);
@@ -67,7 +69,7 @@ class GalleryToolBar extends StatelessWidget {
                   int idx = index;
                   if (model.getItemFormat(idx) == ContentFormat.webm) {
                     Fluttertoast.showToast(
-                        msg: AppLocalizations.of(context)!.toolbar2n1);
+                        msg: AppLocalizations.of(context)!.toolbarDownloading);
                   }
                   DownloadHelper.downloadFile(
                       model.getItemUrl(idx, model.getPref().downloadSize),
@@ -75,7 +77,7 @@ class GalleryToolBar extends StatelessWidget {
                       model.getItemID(idx),
                       ConstStrings.format[model.getItemFormat(idx).index]);
                   Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!.toolbar2n1);
+                      msg: AppLocalizations.of(context)!.toolbarDownloading);
                 },
               )),
               Expanded(
@@ -85,7 +87,7 @@ class GalleryToolBar extends StatelessWidget {
                             context: context,
                             builder: ((context) {
                               int idx = index;
-                              var imageresponse = model.getItem(idx);
+                              model.getItem(idx);
                               return Container(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -113,7 +115,7 @@ class GalleryToolBar extends StatelessWidget {
                                         alignment: Alignment.center,
                                         child: Text(
                                           AppLocalizations.of(context)!
-                                              .toolbar3o1,
+                                              .toolbarSharePicture,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(fontSize: 16),
                                         ),
@@ -126,14 +128,14 @@ class GalleryToolBar extends StatelessWidget {
                                             model.getItemID(idx));
                                         Fluttertoast.showToast(
                                             msg: AppLocalizations.of(context)!
-                                                .toolbar3n1);
+                                                .toolbarShareLinkCopied);
                                       },
                                       child: Container(
                                         height: 48,
                                         alignment: Alignment.center,
                                         child: Text(
                                           AppLocalizations.of(context)!
-                                              .toolbar3o2,
+                                              .toolbarShareLink,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(fontSize: 16),
                                         ),

@@ -1,6 +1,6 @@
+import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
 import 'package:derpiviewer/helpers/helper.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -41,13 +41,13 @@ class _DetailSheetState extends State<DetailSheet> {
                 onTap: () {
                   Clipboard.setData(ClipboardData(text: _image.id.toString()));
                   Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!.toolbar4n1);
+                      msg: AppLocalizations.of(context)!.toolbarCopyId);
                 },
                 child: Chip(
                     label: Text(
                   "ID: ${_image.id}",
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 )))),
         Align(
             alignment: Alignment.centerLeft,
@@ -73,11 +73,14 @@ class _DetailSheetState extends State<DetailSheet> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text(AppLocalizations.of(context)!.toolbar4n3t),
-                    content: Text(AppLocalizations.of(context)!.toolbar4n3d),
+                    title:
+                        Text(AppLocalizations.of(context)!.toolbarConfirmTitle),
+                    content: Text(
+                        AppLocalizations.of(context)!.toolbarConfirmMessage),
                     actions: <Widget>[
                       TextButton(
-                        child: Text(AppLocalizations.of(context)!.toolbar4n3o1),
+                        child: Text(
+                            AppLocalizations.of(context)!.toolbarConfirmOk),
                         onPressed: () async {
                           Navigator.pop(context);
                           if (await canLaunchUrl(Uri.parse(href ?? ""))) {
@@ -88,7 +91,8 @@ class _DetailSheetState extends State<DetailSheet> {
                         },
                       ),
                       TextButton(
-                        child: Text(AppLocalizations.of(context)!.toolbar4n3o2),
+                        child: Text(
+                            AppLocalizations.of(context)!.toolbarConfirmCancel),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -183,7 +187,8 @@ class _DetailSheetState extends State<DetailSheet> {
               return GestureDetector(
                   onTap: () {
                     appendClipboard(
-                        AppLocalizations.of(context)!.toolbar4n2, _tags[index]);
+                        AppLocalizations.of(context)!.toolbarCopyTag,
+                        _tags[index]);
                     // Navigator.pop(context);
                   },
                   child: Chip(

@@ -1,80 +1,84 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:derpiviewer/api/clients.dart';
+import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
 import 'package:derpiviewer/models/search_model.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 import 'package:derpiviewer/models/pref_model.dart';
+import 'package:synchronized/synchronized.dart';
 
 class TrendingModel extends SearchInterface {
-  List<ImageResponse> trendings = <ImageResponse>[];
+  List<ImageResponse> results = <ImageResponse>[];
   ImageResponse? featured;
   late PrefModel prefModel;
   int page = 1;
   int imageCount = 0;
   bool over = false;
-  bool _isLocked = false;
+  final Lock _fetchLock = Lock(); // 添加Lock对象
+
   TrendingModel(PrefModel model) {
     prefModel = model;
     // fetchMore(refresh: true);
   }
   Future fetchTrending(Booru booru, PrefParams params,
       {String? key, bool refresh = false}) async {
-    if (_isLocked) {
-      return;
-    }
-    try {
-      log("Start loading");
-      _isLocked = true;
-      if (over) return;
-      page = refresh ? 1 : page + 1;
-      List<ImageResponse> more = await fetchImages(
-          booru: booru,
-          query: prefModel.featuredQuery,
-          filterID: params.filterID,
-          page: page,
-          perPage: params.perPage,
-          sortDirection: ConstStrings.sds[SortDirection.desc.index],
-          // sortDirection: ConstStrings.sds[params.sortDirection.index],
-          sortField: ConstStrings.sfs[params.sortField.index]);
-      // sortField: ConstStrings.sfs[SortField.wilsonScore.index]);
-      if (more.isEmpty) {
-        over = true;
-        return;
+    if (over || (!refresh && _fetchLock.locked)) return;
+    await _fetchLock.synchronized(() async {
+      try {
+        log("Start loading");
+        page = refresh ? 1 : page + 1;
+
+        List<ImageResponse> more = await BasePhilomenaClient().fetchImages(
+            booru: booru,
+            query: prefModel.featuredQuery,
+            filterID: params.filterID,
+            page: page,
+            perPage: params.perPage,
+            sortDirection: ConstStrings.sds[SortDirection.desc.index],
+            sortField: ConstStrings.sfs[params.sortField.index]);
+
+        if (more.isEmpty) {
+          over = true;
+          return;
+        }
+
+        if (refresh) {
+          featured =
+              await BasePhilomenaClient().fetchFeaturedImage(booru: booru);
+          results = <ImageResponse>[];
+        } else {
+          featured ??=
+              await BasePhilomenaClient().fetchFeaturedImage(booru: booru);
+        }
+
+        results.addAll(more);
+        imageCount = results.length;
+        notifyListeners();
+      } catch (e) {
+        log('Fail loading trendings: $e');
+        rethrow;
       }
-      if (refresh) {
-        featured = await fetchFeaturedImage(booru: booru);
-        trendings = <ImageResponse>[];
-      } else {
-        featured ??= await fetchFeaturedImage(booru: booru);
-      }
-      trendings.addAll(more);
-      imageCount = trendings.length;
-      notifyListeners();
-    } finally {
-      _isLocked = false;
-    }
+    });
   }
 
   @override
   String getItemUrl(int index, Size size) {
     switch (size) {
       case Size.full:
-        return trendings[index].fullUrl;
+        return results[index].fullUrl;
       case Size.large:
-        return trendings[index].largeUrl;
+        return results[index].largeUrl;
       case Size.medium:
-        return trendings[index].mediumUrl;
+        return results[index].mediumUrl;
       case Size.small:
-        return trendings[index].smallUrl;
+        return results[index].smallUrl;
       case Size.thumb:
-        return trendings[index].thumbUrl;
+        return results[index].thumbUrl;
       case Size.thumbSmall:
-        return trendings[index].thumbSmallUrl;
+        return results[index].thumbSmallUrl;
       case Size.thumbTiny:
-        return trendings[index].thumbTinyUrl;
-      default:
-        return "";
+        return results[index].thumbTinyUrl;
     }
   }
 
@@ -92,17 +96,17 @@ class TrendingModel extends SearchInterface {
 
   @override
   ImageResponse getItem(int index) {
-    return trendings[index];
+    return results[index];
   }
 
   @override
   ContentFormat getItemFormat(int index) {
-    return trendings[index].format;
+    return results[index].format;
   }
 
   @override
   int getItemID(int index) {
-    return trendings[index].id;
+    return results[index].id;
   }
 
   @override
@@ -113,5 +117,25 @@ class TrendingModel extends SearchInterface {
   @override
   PrefModel getPref() {
     return prefModel;
+  }
+
+  @override
+  String getItemMediumThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].thumbUrl;
+    } else {
+      return results[index].mediumUrl;
+    }
+  }
+
+  @override
+  String getItemThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].thumbUrl;
+    } else {
+      return results[index].smallUrl;
+    }
   }
 }

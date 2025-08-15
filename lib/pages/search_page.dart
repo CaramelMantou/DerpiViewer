@@ -54,11 +54,23 @@ class _SearchPageState extends State<SearchPage> {
             historyKey: "histoire",
             textEditingController: _textController,
             onSubmitted: ((value) => showResult(value)),
-            style: const TextStyle(
-              color: Colors.white,
-              decorationColor: Colors.white,
+            textInputAction: TextInputAction.search, // 明确设置为搜索动作
+            decoration: InputDecoration(
+                hintText: '搜索...',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Theme.of(context).iconTheme.color)),
+            backgroundColor: Theme.of(context).chipTheme.backgroundColor,
+            cursorColor:
+                Theme.of(context).floatingActionButtonTheme.foregroundColor,
+            deleteIconColor: Theme.of(context).iconTheme.color,
+            historyIconColor: Theme.of(context).iconTheme.color,
+            style: TextStyle(
+              color: Theme.of(context)
+                  .floatingActionButtonTheme
+                  .foregroundColor, // 使用主题中的文本颜色
+              // 或者直接指定颜色：
+              // color: Colors.white, // 例如设置为白色
             ),
-            cursorColor: Colors.white,
           ),
           actions: [
             IconButton(

@@ -88,38 +88,34 @@ class ConstStrings {
   static String getSfs(BuildContext ctx, SortField field) {
     switch (field) {
       case SortField.wilsonScore:
-        return AppLocalizations.of(ctx)!.sf1;
+        return AppLocalizations.of(ctx)!.sortFieldWilson;
       case SortField.created:
-        return AppLocalizations.of(ctx)!.sf2;
+        return AppLocalizations.of(ctx)!.sortFieldId;
       case SortField.updated:
-        return AppLocalizations.of(ctx)!.sf3;
+        return AppLocalizations.of(ctx)!.sortFieldUpdated;
       case SortField.firstSeen:
-        return AppLocalizations.of(ctx)!.sf4;
+        return AppLocalizations.of(ctx)!.sortFieldFirstSeen;
       case SortField.score:
-        return AppLocalizations.of(ctx)!.sf5;
+        return AppLocalizations.of(ctx)!.sortFieldScore;
       case SortField.relevance:
-        return AppLocalizations.of(ctx)!.sf6;
+        return AppLocalizations.of(ctx)!.sortFieldRelevance;
       case SortField.width:
-        return AppLocalizations.of(ctx)!.sf7;
+        return AppLocalizations.of(ctx)!.sortFieldWidth;
       case SortField.height:
-        return AppLocalizations.of(ctx)!.sf8;
+        return AppLocalizations.of(ctx)!.sortFieldHeight;
       case SortField.comments:
-        return AppLocalizations.of(ctx)!.sf9;
+        return AppLocalizations.of(ctx)!.sortFieldComments;
       case SortField.tagCount:
-        return AppLocalizations.of(ctx)!.sf10;
-      default:
-        return "";
+        return AppLocalizations.of(ctx)!.sortFieldTagCount;
     }
   }
 
   static String getSds(BuildContext ctx, SortDirection dir) {
     switch (dir) {
       case SortDirection.desc:
-        return AppLocalizations.of(ctx)!.sd1;
+        return AppLocalizations.of(ctx)!.sortDirectionDesc;
       case SortDirection.asc:
-        return AppLocalizations.of(ctx)!.sd2;
-      default:
-        return "";
+        return AppLocalizations.of(ctx)!.sortDirectionAsc;
     }
   }
 

@@ -1,8 +1,11 @@
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/helpers/cache_helper.dart';
+import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/search_model.dart';
 import 'package:derpiviewer/pages/gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 
 class ImageGrid extends StatefulWidget {
   final SearchInterface model;
@@ -22,15 +25,18 @@ class _ImageGridState extends State<ImageGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final isSingleColumn = Provider.of<PrefModel>(context).isSingleColumn;
     return SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: isSingleColumn ? 1 : 2, // 根据模式切换列数
             childAspectRatio: 1.0,
             mainAxisSpacing: 7.0,
             crossAxisSpacing: 7.0),
         delegate: SliverChildBuilderDelegate(
             (context, index) => ThumbHero(
-                photo: _model.getItemUrl(index, Size.small),
+                photo: isSingleColumn
+                    ? _model.getItemMediumThumbUrl(index)
+                    : _model.getItemThumbUrl(index),
                 idTag: _model.getItemID(index),
                 onTap: (() => goto(index))),
             childCount: _model.getItemCount()));
@@ -67,6 +73,7 @@ class ThumbHero extends StatelessWidget {
               imageUrl: photo,
               fit: BoxFit.cover,
               errorWidget: (context, url, error) => const Icon(Icons.error),
+              cacheManager: ImageCacheManager(),
             ),
           ),
         ),

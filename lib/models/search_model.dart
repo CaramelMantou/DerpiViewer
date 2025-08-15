@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:derpiviewer/api/clients.dart';
+import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:flutter/widgets.dart';
+import 'package:synchronized/synchronized.dart';
 
 class SearchModel extends SearchInterface {
   late PrefModel prefModel;
@@ -13,47 +15,52 @@ class SearchModel extends SearchInterface {
   int page = 1;
   int imageCount = 0;
   bool over = false;
-  bool _isLocked = false;
+  final Lock _fetchLock = Lock(); // 替换 _isLocked 的锁
   String _query = "";
   SearchModel(PrefModel model) {
     prefModel = model;
   }
 
   Future _fetchResult({String? query, bool refresh = false}) async {
-    if (_isLocked) {
+    if (!refresh && _fetchLock.locked) {
       return;
     }
-    try {
-      log("Start loading");
-      _isLocked = true;
-      if (query == null && _query.isEmpty) return;
-      over = query == _query;
-      if (over && !refresh) return;
-      PrefParams params = prefModel.params;
-      _query = refresh ? query ?? _query : _query;
-      page = refresh ? 1 : page + 1;
-      List<ImageResponse> more = await fetchImages(
-          booru: prefModel.booru,
-          query: query ?? _query,
-          filterID: params.filterID,
-          page: page,
-          key: prefModel.key,
-          perPage: params.perPage,
-          sortDirection: ConstStrings.sds[params.sortDirection.index],
-          sortField: ConstStrings.sfs[params.sortField.index]);
-      if (more.isEmpty && !refresh) {
-        over = true;
-        return;
-      } else {
-        over = false;
+    await _fetchLock.synchronized(() async {
+      try {
+        log("Start loading");
+        if (query == null && _query.isEmpty) return;
+        bool over = query == _query;
+        if (over && !refresh) return;
+
+        PrefParams params = prefModel.params;
+        _query = refresh ? query ?? _query : _query;
+        page = refresh ? 1 : page + 1;
+
+        List<ImageResponse> more = await BasePhilomenaClient().fetchImages(
+            booru: prefModel.booru,
+            query: query ?? _query,
+            filterID: params.filterID,
+            page: page,
+            key: prefModel.key,
+            perPage: params.perPage,
+            sortDirection: ConstStrings.sds[params.sortDirection.index],
+            sortField: ConstStrings.sfs[params.sortField.index]);
+
+        if (more.isEmpty && !refresh) {
+          over = true;
+          return;
+        } else {
+          over = false;
+        }
+
+        results = refresh ? <ImageResponse>[] : results;
+        results.addAll(more);
+        imageCount = results.length;
+        notifyListeners();
+      } finally {
+        // 锁会自动释放
       }
-      results = refresh ? <ImageResponse>[] : results;
-      results.addAll(more);
-      imageCount = results.length;
-      notifyListeners();
-    } finally {
-      _isLocked = false;
-    }
+    });
   }
 
   void newSearch(String query) async {
@@ -113,8 +120,6 @@ class SearchModel extends SearchInterface {
         return results[index].thumbSmallUrl;
       case Size.thumbTiny:
         return results[index].thumbTinyUrl;
-      default:
-        return "";
     }
   }
 
@@ -127,6 +132,26 @@ class SearchModel extends SearchInterface {
   PrefModel getPref() {
     return prefModel;
   }
+
+  @override
+  String getItemMediumThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].thumbUrl;
+    } else {
+      return results[index].mediumUrl;
+    }
+  }
+
+  @override
+  String getItemThumbUrl(int index) {
+    if (results[index].format == ContentFormat.mp4 ||
+        results[index].format == ContentFormat.webm) {
+      return results[index].thumbUrl;
+    } else {
+      return results[index].smallUrl;
+    }
+  }
 }
 
 abstract class SearchInterface extends ChangeNotifier {
@@ -135,6 +160,8 @@ abstract class SearchInterface extends ChangeNotifier {
   String getItemUrl(int index, Size size);
   ImageResponse getItem(int index);
   ContentFormat getItemFormat(int index);
+  String getItemMediumThumbUrl(int index);
+  String getItemThumbUrl(int index);
   void fetchMore({bool refresh});
   Booru getBooru();
   PrefModel getPref();

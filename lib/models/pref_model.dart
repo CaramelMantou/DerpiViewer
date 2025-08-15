@@ -1,7 +1,7 @@
+import 'package:derpiviewer/api/do.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 
 class PrefModel extends ChangeNotifier {
   final Map<Booru, String> _boorus = ConstStrings.boorus;
@@ -15,10 +15,34 @@ class PrefModel extends ChangeNotifier {
   Size imageSize = Size.full;
   Size downloadSize = Size.full;
   Size shareSize = Size.full;
+  bool _isDarkMode = false;
+  bool _isSingleColumn = false;
+  int _slideInterval = 5; // 默认5秒
+
+  bool get isSingleColumn => _isSingleColumn;
+  bool get isDarkMode => _isDarkMode;
+  int get slideInterval => _slideInterval;
+
+  void toggleSingleColumn() {
+    _isSingleColumn = !_isSingleColumn;
+    notifyListeners();
+  }
+
+  void toggleDarkMode() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+    savePref();
+  }
+
+  void setSlideInterval(int interval) {
+    _slideInterval = interval;
+    notifyListeners();
+  }
 
   PrefModel() {
     getPref();
   }
+
   void changeHost(Booru b) {
     booru = b;
     String fName = ConstStrings.filters[b]!.keys.first;
@@ -60,6 +84,7 @@ class PrefModel extends ChangeNotifier {
     videoSize = Size.values[tmpVideoSize];
     downloadSize = Size.values[tmpDownloadSize];
     shareSize = Size.values[tmpShareSize];
+    _isDarkMode = prefs.getBool("is_dark_mode") ?? false;
     key = tmpKey;
     if (!ConstStrings.filters[booru]!.containsKey(tmpFilterName)) {
       tmpFilterName = ConstStrings.filters[booru]!.keys.first;
@@ -84,5 +109,6 @@ class PrefModel extends ChangeNotifier {
     await prefs.setInt("video_size", videoSize.index);
     await prefs.setInt("download_size", downloadSize.index);
     await prefs.setInt("share_size", shareSize.index);
+    await prefs.setBool("is_dark_mode", _isDarkMode);
   }
 }

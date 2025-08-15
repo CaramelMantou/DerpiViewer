@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/trending_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:derpiviewer/style/theme.dart';
 import 'l10n/app_localizations.dart';
 
 void main() async {
@@ -44,14 +44,18 @@ class DVApp extends StatelessWidget {
   const DVApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      title: 'Derpiviewer',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+    return Consumer<PrefModel>(
+      builder: (context, prefModel, child) {
+        return MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          title: 'Derpiviewer',
+          theme: AppTheme.defaultTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: prefModel.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const HomePage(),
+        );
+      },
     );
   }
 }

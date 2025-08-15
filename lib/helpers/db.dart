@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
-import 'package:derpiviewer/helpers/philomena_api.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 

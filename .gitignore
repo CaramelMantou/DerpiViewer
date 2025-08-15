@@ -49,3 +49,6 @@ app.*.map.json
 
 /android/key
 key.properties
+
+devtools_options.yaml
+analysis_options.yaml
