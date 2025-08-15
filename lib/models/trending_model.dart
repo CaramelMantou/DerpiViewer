@@ -8,35 +8,32 @@ import 'package:derpiviewer/models/search_model.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:synchronized/synchronized.dart';
 
-class TrendingModel extends SearchInterface {
-  List<ImageResponse> results = <ImageResponse>[];
+class TrendingModel extends SearchModel {
   ImageResponse? featured;
-  late PrefModel prefModel;
-  int page = 1;
-  int imageCount = 0;
-  bool over = false;
-  final Lock _fetchLock = Lock(); // 添加Lock对象
+  final Lock _fetchLock = Lock();
 
-  TrendingModel(PrefModel model) {
-    prefModel = model;
+  TrendingModel(PrefModel model) : super(model) {
     // fetchMore(refresh: true);
   }
-  Future fetchTrending(Booru booru, PrefParams params,
-      {String? key, bool refresh = false}) async {
+
+  @override
+  Future fetchMore({bool refresh = false}) async {
+    log("fetchMore");
     if (over || (!refresh && _fetchLock.locked)) return;
+
     await _fetchLock.synchronized(() async {
       try {
         log("Start loading");
         page = refresh ? 1 : page + 1;
 
         List<ImageResponse> more = await BasePhilomenaClient().fetchImages(
-            booru: booru,
+            booru: prefModel.booru,
             query: prefModel.featuredQuery,
-            filterID: params.filterID,
+            filterID: prefModel.params.filterID,
             page: page,
-            perPage: params.perPage,
+            perPage: prefModel.params.perPage,
             sortDirection: ConstStrings.sds[SortDirection.desc.index],
-            sortField: ConstStrings.sfs[params.sortField.index]);
+            sortField: ConstStrings.sfs[prefModel.params.sortField.index]);
 
         if (more.isEmpty) {
           over = true;
@@ -44,12 +41,12 @@ class TrendingModel extends SearchInterface {
         }
 
         if (refresh) {
-          featured =
-              await BasePhilomenaClient().fetchFeaturedImage(booru: booru);
+          featured = await BasePhilomenaClient()
+              .fetchFeaturedImage(booru: prefModel.booru);
           results = <ImageResponse>[];
         } else {
-          featured ??=
-              await BasePhilomenaClient().fetchFeaturedImage(booru: booru);
+          featured ??= await BasePhilomenaClient()
+              .fetchFeaturedImage(booru: prefModel.booru);
         }
 
         results.addAll(more);
@@ -60,82 +57,5 @@ class TrendingModel extends SearchInterface {
         rethrow;
       }
     });
-  }
-
-  @override
-  String getItemUrl(int index, Size size) {
-    switch (size) {
-      case Size.full:
-        return results[index].fullUrl;
-      case Size.large:
-        return results[index].largeUrl;
-      case Size.medium:
-        return results[index].mediumUrl;
-      case Size.small:
-        return results[index].smallUrl;
-      case Size.thumb:
-        return results[index].thumbUrl;
-      case Size.thumbSmall:
-        return results[index].thumbSmallUrl;
-      case Size.thumbTiny:
-        return results[index].thumbTinyUrl;
-    }
-  }
-
-  @override
-  int getItemCount() {
-    return imageCount;
-  }
-
-  @override
-  void fetchMore({bool refresh = false}) {
-    log("fetchMore");
-    fetchTrending(prefModel.booru, prefModel.params,
-        key: prefModel.key, refresh: refresh);
-  }
-
-  @override
-  ImageResponse getItem(int index) {
-    return results[index];
-  }
-
-  @override
-  ContentFormat getItemFormat(int index) {
-    return results[index].format;
-  }
-
-  @override
-  int getItemID(int index) {
-    return results[index].id;
-  }
-
-  @override
-  Booru getBooru() {
-    return prefModel.booru;
-  }
-
-  @override
-  PrefModel getPref() {
-    return prefModel;
-  }
-
-  @override
-  String getItemMediumThumbUrl(int index) {
-    if (results[index].format == ContentFormat.mp4 ||
-        results[index].format == ContentFormat.webm) {
-      return results[index].thumbUrl;
-    } else {
-      return results[index].mediumUrl;
-    }
-  }
-
-  @override
-  String getItemThumbUrl(int index) {
-    if (results[index].format == ContentFormat.mp4 ||
-        results[index].format == ContentFormat.webm) {
-      return results[index].thumbUrl;
-    } else {
-      return results[index].smallUrl;
-    }
   }
 }
