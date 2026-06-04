@@ -1,0 +1,26 @@
+{
+  "post": {
+    "id": 100,
+    "representations": {
+      "full": "https://twibooru.org/img/view/2012/1/2/100.png",
+      "large": "https://twibooru.org/img/view/2012/1/2/100_large.png",
+      "medium": "https://twibooru.org/img/view/2012/1/2/100_medium.png",
+      "small": "https://twibooru.org/img/view/2012/1/2/100_small.png",
+      "thumb": "https://twibooru.org/img/view/2012/1/2/100_thumb.png",
+      "thumb_small": "https://twibooru.org/img/view/2012/1/2/100_thumb_small.png",
+      "thumb_tiny": "https://twibooru.org/img/view/2012/1/2/100_thumb_tiny.png"
+    },
+    "format": "png",
+    "tags": ["featured", "twilight sparkle"],
+    "tag_ids": [1, 2],
+    "description": "Featured post on Twibooru",
+    "created_at": "2012-01-02T00:00:00Z",
+    "duration": 0.0,
+    "upvotes": 500,
+    "downvotes": 5,
+    "comment_count": 30,
+    "faves": 200,
+    "uploader": "FeatureUploader",
+    "source_urls": ["https://example.com/featured"]
+  }
+}

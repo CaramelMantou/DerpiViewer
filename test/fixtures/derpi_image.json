@@ -1,0 +1,26 @@
+{
+  "image": {
+    "id": 0,
+    "representations": {
+      "full": "https://derpicdn.net/img/view/2012/1/2/0.png",
+      "large": "https://derpicdn.net/img/view/2012/1/2/0_large.png",
+      "medium": "https://derpicdn.net/img/view/2012/1/2/0_medium.png",
+      "small": "https://derpicdn.net/img/view/2012/1/2/0_small.png",
+      "thumb": "https://derpicdn.net/img/view/2012/1/2/0_thumb.png",
+      "thumb_small": "https://derpicdn.net/img/view/2012/1/2/0_thumb_small.png",
+      "thumb_tiny": "https://derpicdn.net/img/view/2012/1/2/0_thumb_tiny.png"
+    },
+    "format": "png",
+    "tags": ["safe", "solo"],
+    "tag_ids": [1, 2],
+    "description": "Test image",
+    "created_at": "2012-01-02T00:00:00Z",
+    "duration": 0.0,
+    "upvotes": 100,
+    "downvotes": 10,
+    "comment_count": 5,
+    "faves": 50,
+    "uploader": "TestUploader",
+    "source_urls": ["https://example.com"]
+  }
+}
