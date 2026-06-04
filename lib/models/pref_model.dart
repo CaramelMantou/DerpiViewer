@@ -1,6 +1,10 @@
 import 'package:derpiviewer/api/do.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
+import 'package:derpiviewer/core/domain/enums/sort_field.dart';
+import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrefModel extends ChangeNotifier {
@@ -11,10 +15,10 @@ class PrefModel extends ChangeNotifier {
   String featuredQuery = "first_seen_at.gt:3 days ago";
   List<String> history = <String>[];
   int historyCount = 0;
-  Size videoSize = Size.medium;
-  Size imageSize = Size.full;
-  Size downloadSize = Size.full;
-  Size shareSize = Size.full;
+  ImageSize videoSize = ImageSize.medium;
+  ImageSize imageSize = ImageSize.full;
+  ImageSize downloadSize = ImageSize.full;
+  ImageSize shareSize = ImageSize.full;
   bool _isDarkMode = false;
   bool _isSingleColumn = false;
   int _slideInterval = 5; // 默认5秒
@@ -80,10 +84,10 @@ class PrefModel extends ChangeNotifier {
     int tmpDownloadSize = prefs.getInt("download_size") ?? imageSize.index;
     int tmpShareSize = prefs.getInt("share_size") ?? imageSize.index;
     booru = Booru.values[tmpBooru];
-    imageSize = Size.values[tmpImageSize];
-    videoSize = Size.values[tmpVideoSize];
-    downloadSize = Size.values[tmpDownloadSize];
-    shareSize = Size.values[tmpShareSize];
+    imageSize = ImageSize.values[tmpImageSize];
+    videoSize = ImageSize.values[tmpVideoSize];
+    downloadSize = ImageSize.values[tmpDownloadSize];
+    shareSize = ImageSize.values[tmpShareSize];
     _isDarkMode = prefs.getBool("is_dark_mode") ?? false;
     key = tmpKey;
     if (!ConstStrings.filters[booru]!.containsKey(tmpFilterName)) {

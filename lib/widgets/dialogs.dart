@@ -2,6 +2,10 @@ import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
+import 'package:derpiviewer/core/domain/enums/sort_field.dart';
+import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:derpiviewer/l10n/app_localizations.dart';
@@ -153,7 +157,7 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: DropdownMenu<Size>(
+            child: DropdownMenu<ImageSize>(
               leadingIcon: const Icon(Icons.photo_library),
               width: MediaQuery.of(context).size.width * 0.7,
               label: Text(AppLocalizations.of(context)!.drawerSizePreviewImage),
@@ -162,12 +166,12 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
                 if (value != null) pref.imageSize = value;
               },
               dropdownMenuEntries: const [
-                DropdownMenuEntry<Size>(
-                  value: Size.full,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.full,
                   label: "Full",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.large,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.large,
                   label: "Large",
                 )
               ],
@@ -177,7 +181,7 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: DropdownMenu<Size>(
+            child: DropdownMenu<ImageSize>(
               leadingIcon: const Icon(Icons.video_library),
               width: MediaQuery.of(context).size.width * 0.7,
               label: Text(AppLocalizations.of(context)!.drawerSizePreviewVideo),
@@ -186,20 +190,20 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
                 if (value != null) pref.videoSize = value;
               },
               dropdownMenuEntries: const [
-                DropdownMenuEntry<Size>(
-                  value: Size.full,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.full,
                   label: "Full",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.large,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.large,
                   label: "Large",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.medium,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.medium,
                   label: "Medium",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.small,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.small,
                   label: "Small",
                 ),
               ],
@@ -209,7 +213,7 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: DropdownMenu<Size>(
+            child: DropdownMenu<ImageSize>(
               leadingIcon: const Icon(Icons.download),
               width: MediaQuery.of(context).size.width * 0.7,
               label: Text(AppLocalizations.of(context)!.drawerSizeDownload),
@@ -218,12 +222,12 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
                 if (value != null) pref.downloadSize = value;
               },
               dropdownMenuEntries: const [
-                DropdownMenuEntry<Size>(
-                  value: Size.full,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.full,
                   label: "Full",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.large,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.large,
                   label: "Large",
                 )
               ],
@@ -233,7 +237,7 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: DropdownMenu<Size>(
+            child: DropdownMenu<ImageSize>(
               leadingIcon: const Icon(Icons.share),
               width: MediaQuery.of(context).size.width * 0.7,
               label: Text(AppLocalizations.of(context)!.drawerSizeShare),
@@ -245,16 +249,16 @@ class ChangeDownloadPrefDialog extends StatelessWidget {
                 }
               },
               dropdownMenuEntries: const [
-                DropdownMenuEntry<Size>(
-                  value: Size.full,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.full,
                   label: "Full",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.large,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.large,
                   label: "Large",
                 ),
-                DropdownMenuEntry<Size>(
-                  value: Size.medium,
+                DropdownMenuEntry<ImageSize>(
+                  value: ImageSize.medium,
                   label: "Medium",
                 )
               ],

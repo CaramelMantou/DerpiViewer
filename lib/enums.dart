@@ -1,43 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/sort_field.dart';
+import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
+import 'package:derpiviewer/core/domain/enums/tag_category.dart';
 import 'l10n/app_localizations.dart';
-
-enum Booru { derpi, trixie, pony, twi, fur, ponerpics, mane }
-
-enum SortField {
-  wilsonScore,
-  created,
-  updated,
-  firstSeen,
-  score,
-  relevance,
-  width,
-  height,
-  comments,
-  tagCount
-}
-
-enum SortDirection { desc, asc }
-
-// enum Filter { nofilter, defalta, everything }
-
-enum Size { full, large, medium, small, thumb, thumbSmall, thumbTiny }
-
-enum ContentFormat { gif, jpg, jpeg, png, svg, webm, mp4 }
-
-enum TagCategory {
-  general,
-  artist,
-  rating,
-  character,
-  oc,
-  species,
-  body,
-  official,
-  fanmade,
-  origin,
-  spoiler,
-  error
-}
 
 class ConstStrings {
   static String defaultHost = 'trixiebooru.org';

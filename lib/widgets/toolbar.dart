@@ -1,4 +1,6 @@
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/content_format.dart';
+import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:derpiviewer/helpers/db.dart';
 import 'package:derpiviewer/helpers/download.dart';
 import 'package:derpiviewer/models/search_model.dart';
@@ -102,7 +104,7 @@ class GalleryToolBar extends StatelessWidget {
                                                 idx,
                                                 (model.getItemFormat(idx) ==
                                                         ContentFormat.webm)
-                                                    ? Size.thumb
+                                                    ? ImageSize.thumb
                                                     : model
                                                         .getPref()
                                                         .shareSize),

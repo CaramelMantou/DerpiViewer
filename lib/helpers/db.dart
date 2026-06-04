@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:derpiviewer/api/do.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 

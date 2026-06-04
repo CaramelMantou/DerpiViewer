@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';

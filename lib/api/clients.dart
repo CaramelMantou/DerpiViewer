@@ -1,4 +1,5 @@
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/helpers/connect.dart';
 

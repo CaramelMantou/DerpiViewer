@@ -1,4 +1,6 @@
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/tag_category.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

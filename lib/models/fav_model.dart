@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:derpiviewer/api/do.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/content_format.dart';
+import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/search_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
@@ -77,21 +79,21 @@ class FavModel extends SearchInterface {
   }
 
   @override
-  String getItemUrl(int index, Size size) {
-    switch (size) {
-      case Size.full:
+  String getItemUrl(int index, ImageSize imageSize) {
+    switch (imageSize) {
+      case ImageSize.full:
         return results[index].fullUrl;
-      case Size.large:
+      case ImageSize.large:
         return results[index].largeUrl;
-      case Size.medium:
+      case ImageSize.medium:
         return results[index].mediumUrl;
-      case Size.small:
+      case ImageSize.small:
         return results[index].smallUrl;
-      case Size.thumb:
+      case ImageSize.thumb:
         return results[index].thumbUrl;
-      case Size.thumbSmall:
+      case ImageSize.thumbSmall:
         return results[index].thumbSmallUrl;
-      case Size.thumbTiny:
+      case ImageSize.thumbTiny:
         return results[index].thumbTinyUrl;
     }
   }

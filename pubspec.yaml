@@ -53,6 +53,7 @@ dependencies:
   flutter_markdown: any
   url_launcher: any
   synchronized: ^3.4.0
+  get_it: ^8.0.0
   # flutter_tags: ^1.0.0-nullsafety.1
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/core/domain/enums/content_format.dart';
+import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
+import 'package:derpiviewer/core/domain/enums/sort_field.dart';
 
 class ImageResponse {
   late int id;

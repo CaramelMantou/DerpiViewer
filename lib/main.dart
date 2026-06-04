@@ -8,12 +8,14 @@ import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/trending_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
 import 'package:derpiviewer/style/theme.dart';
+import 'package:derpiviewer/core/di/injection_container.dart';
 import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize();
   await DbHelper.initDB();
+  await configureDependencies();
 
   runApp(
     MultiProvider(

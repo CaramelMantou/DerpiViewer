@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/search_model.dart';

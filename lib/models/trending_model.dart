@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:derpiviewer/api/clients.dart';
 import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
 import 'package:derpiviewer/models/search_model.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:synchronized/synchronized.dart';

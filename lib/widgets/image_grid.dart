@@ -1,4 +1,3 @@
-import 'package:derpiviewer/enums.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/models/search_model.dart';
