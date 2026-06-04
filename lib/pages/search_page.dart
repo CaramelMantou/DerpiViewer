@@ -1,4 +1,4 @@
-import 'package:derpiviewer/models/search_model.dart';
+import 'package:derpiviewer/ui/providers/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/pages/result_page.dart';
 import 'package:input_history_text_field/input_history_text_field.dart';
@@ -15,22 +15,38 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _textController = TextEditingController();
   late String _initQuery;
+  bool _isSearchEnabled = false;
 
   @override
   void initState() {
     _initQuery = widget.initQuery ?? "";
     _textController.text = _initQuery;
+    _isSearchEnabled = _initQuery.isNotEmpty;
+    _textController.addListener(_onTextChanged);
     super.initState();
   }
 
   @override
   void dispose() {
+    _textController.removeListener(_onTextChanged);
     _textController.dispose();
     super.dispose();
   }
 
+  void _onTextChanged() {
+    final enabled = _textController.text.isNotEmpty;
+    if (enabled != _isSearchEnabled) {
+      setState(() {
+        _isSearchEnabled = enabled;
+      });
+    }
+  }
+
   void showResult(query) {
-    Provider.of<SearchModel>(context, listen: false).newSearch(query);
+    if (query.isEmpty) return;
+    final searchProvider = Provider.of<SearchProvider>(context, listen: false);
+    searchProvider.newSearch(query);
+    searchProvider.addHistory(query);
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -54,7 +70,7 @@ class _SearchPageState extends State<SearchPage> {
             historyKey: "histoire",
             textEditingController: _textController,
             onSubmitted: ((value) => showResult(value)),
-            textInputAction: TextInputAction.search, // 明确设置为搜索动作
+            textInputAction: TextInputAction.search,
             decoration: InputDecoration(
                 hintText: '搜索...',
                 border: InputBorder.none,
@@ -67,9 +83,7 @@ class _SearchPageState extends State<SearchPage> {
             style: TextStyle(
               color: Theme.of(context)
                   .floatingActionButtonTheme
-                  .foregroundColor, // 使用主题中的文本颜色
-              // 或者直接指定颜色：
-              // color: Colors.white, // 例如设置为白色
+                  .foregroundColor,
             ),
           ),
           actions: [
@@ -77,13 +91,20 @@ class _SearchPageState extends State<SearchPage> {
               tooltip: 'Clear',
               icon: const Icon(Icons.clear),
               onPressed: () {
-                // _textController.text = '';
                 _textController.clear();
               },
             ),
             IconButton(
-                onPressed: () => showResult(_textController.text),
-                icon: const Icon(Icons.search))
+              tooltip: 'Search',
+              icon: Icon(
+                Icons.search,
+                color: _isSearchEnabled
+                    ? Theme.of(context).floatingActionButtonTheme.foregroundColor
+                    : Theme.of(context).disabledColor,
+              ),
+              onPressed:
+                  _isSearchEnabled ? () => showResult(_textController.text) : null,
+            ),
           ],
         ),
         body: Container());

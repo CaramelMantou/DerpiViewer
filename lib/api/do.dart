@@ -88,6 +88,50 @@ class ImageResponse {
     uploader = obj["uploader"] ?? "";
     sourceUrls = List<String>.from(obj["source_urls"] ?? []);
   }
+  ImageResponse.fromEntity(
+      {required int id,
+      required Booru booru,
+      required String fullUrl,
+      required String smallUrl,
+      required String mediumUrl,
+      required String largeUrl,
+      required String thumbUrl,
+      required String thumbSmallUrl,
+      required String thumbTinyUrl,
+      required ContentFormat format,
+      required List<String> tags,
+      required List<int> tagids,
+      required String description,
+      required String createdAt,
+      required double duration,
+      required int upvotes,
+      required int downvotes,
+      required int comments,
+      required int faves,
+      required String uploader,
+      required List<String> sourceUrls}) {
+    this.id = id;
+    this.booru = booru;
+    this.fullUrl = fullUrl;
+    this.smallUrl = smallUrl;
+    this.mediumUrl = mediumUrl;
+    this.largeUrl = largeUrl;
+    this.thumbUrl = thumbUrl;
+    this.thumbSmallUrl = thumbSmallUrl;
+    this.thumbTinyUrl = thumbTinyUrl;
+    this.format = format;
+    this.tags = tags;
+    this.tagids = tagids;
+    this.description = description;
+    this.createdAt = createdAt;
+    this.duration = duration;
+    this.upvotes = upvotes;
+    this.downvotes = downvotes;
+    this.comments = comments;
+    this.faves = faves;
+    this.uploader = uploader;
+    this.sourceUrls = sourceUrls;
+  }
   ImageResponse.fromDbQueries(Map<String, dynamic> obj) {
     id = obj["id"];
     booru = Booru.values[obj["booru"]];

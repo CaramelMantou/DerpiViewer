@@ -12,3 +12,11 @@
 - helper.dart appendClipboard fires-and-forgets Future — `lib/helpers/helper.dart:7`. Await or remove async.
 - PrefModel getPref() uses imageSize.index as fallback for all size types — `lib/models/pref_model.dart:82-85`. Use explicit defaults per category.
 - _pageController.page! forced unwrap may crash — `lib/pages/gallery.dart:67,138,153`. Guard with null check before using.
+
+## Deferred from: code review of story 1.4 (2026-06-04)
+
+- `getItemCount()` vs `getItem()` TOCTOU race in `SearchProvider` — pre-existing pattern in all `SearchInterface` implementations (SearchModel, FavModel, TrendingModel). Not new to this story. [`lib/ui/providers/search_provider.dart:163,205`]
+- `addHistory` mutates `_prefProvider.history` directly — matches existing `SearchModel.addHistory` behavior exactly; preserving backward compat. [`lib/ui/providers/search_provider.dart:150-154`]
+- `getItemUrl` emits empty string on failed size lookup in `SearchProvider` — same fallback pattern as old `SearchModel.getItemUrl`. [`lib/ui/providers/search_provider.dart:178-181`]
+- `perPage: 0` causes infinite `_hasMore` in `SearchProvider` — pre-existing issue in `PrefModel.getPref()`, not introduced by this change. [`lib/ui/providers/search_provider.dart:82-83`]
+- `ImageResponse.fromEntity` performs no validation — entity fields should be valid by construction; pre-existing pattern with other constructors. [`lib/api/do.dart:91-134`]
