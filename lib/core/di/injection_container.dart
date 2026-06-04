@@ -1,4 +1,9 @@
 import 'package:get_it/get_it.dart';
+import 'package:derpiviewer/core/data/datasources/favorites_local_source.dart';
+import 'package:derpiviewer/core/data/repositories/favorites_repository_impl.dart';
+import 'package:derpiviewer/core/data/repositories/image_repository_impl.dart';
+import 'package:derpiviewer/core/domain/repositories/favorites_repository.dart';
+import 'package:derpiviewer/core/domain/repositories/image_repository.dart';
 
 /// Internal service locator instance.
 ///
@@ -15,15 +20,17 @@ T resolve<T extends Object>() => _getIt<T>();
 /// Configures the DI container with lazy singleton registrations.
 ///
 /// Called once in [main] before [runApp].
-/// Placeholder registrations are commented out — they will be wired
-/// in Stories 1.2 and 1.3 as repository implementations and API
-/// strategies are introduced.
 Future<void> configureDependencies() async {
-  // Repository implementations — registered in later stories.
-  // _getIt.registerLazySingleton<ImageRepository>(() => ImageRepositoryImpl(...));
-  // _getIt.registerLazySingleton<FavoritesRepository>(() => FavoritesRepositoryImpl(...));
+  // Data sources
+  _getIt.registerLazySingleton<FavoritesLocalSource>(
+    () => FavoritesLocalSource(),
+  );
 
-  // ApiStrategy instances — registered in later stories.
-
-  // Dio instances — registered in later stories.
+  // Repository implementations
+  _getIt.registerLazySingleton<ImageRepository>(
+    () => ImageRepositoryImpl(),
+  );
+  _getIt.registerLazySingleton<FavoritesRepository>(
+    () => FavoritesRepositoryImpl(_getIt<FavoritesLocalSource>()),
+  );
 }
