@@ -22,8 +22,11 @@
   "drawerApiDescription": "管理API密钥",
   "drawerApiHint": "你可以从这里获得API密钥",
   
+  "favouritesEmptyTitle": "暂无收藏",
+  "favouritesEmptySubtitle": "点击图库中图片的心形图标即可收藏",
   "toolbarFavAdded": "已收藏",
   "toolbarFavRemoved": "已取消收藏",
+  "toolbarFavFailed": "收藏更新失败",
   
   "toolbarDownloading": "下载中",
   

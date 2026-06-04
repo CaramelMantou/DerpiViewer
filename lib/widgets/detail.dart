@@ -1,5 +1,5 @@
 import 'package:derpiviewer/api/do.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/tag_categories.dart';
 import 'package:derpiviewer/helpers/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -194,8 +194,8 @@ class _DetailSheetState extends State<DetailSheet> {
                   child: Chip(
                     label: Text(_tags[index],
                         style:
-                            TextStyle(color: ConstStrings.tagForeColors[tc])),
-                    backgroundColor: ConstStrings.tagBackColors[tc],
+                            TextStyle(color: tagForeColors[tc])),
+                    backgroundColor: tagBackColors[tc],
                   ));
             }))
       ],

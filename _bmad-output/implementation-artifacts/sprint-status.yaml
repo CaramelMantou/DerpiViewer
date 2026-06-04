@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-04
-last_updated: 2026-06-04
+last_updated: 2026-06-05
 project: derpiviewer
 project_key: NOKEY
 tracking_system: file-system
@@ -52,13 +52,13 @@ development_status:
   epic-1-retrospective: optional
 
   epic-2: backlog
-  2-1-gallery-viewstate-scrim-retry-zoom-reset: backlog
-  2-2-favorites-viewstate-empty-refresh-toast-fix: backlog
-  2-3-epic-2-widget-tests: backlog
+  2-1-gallery-viewstate-scrim-retry-zoom-reset: done
+  2-2-favorites-viewstate-empty-refresh-toast-fix: done
+  2-3-epic-2-widget-tests: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-file-splits-error-view-widget: backlog
+  epic-3: in-progress
+  3-1-file-splits-error-view-widget: done
   3-2-dark-mode-tag-contrast-theme-animation: backlog
   3-3-i18n-extraction-accessibility: backlog
   3-4-bug-fixes-booru-switch-api-key-uploader-offline: backlog

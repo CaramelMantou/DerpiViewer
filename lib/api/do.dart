@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/constants.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
@@ -75,7 +75,7 @@ class ImageResponse {
       thumbSmallUrl = "https://ponerpics.org/$thumbSmallUrl";
       thumbTinyUrl = "https://ponerpics.org/$thumbTinyUrl";
     }
-    format = ContentFormat.values[ConstStrings.format.indexOf(obj["format"])];
+    format = ContentFormat.values[formatExtensions.indexOf(obj["format"])];
     tags = List<String>.from(obj["tags"]);
     tagids = List<int>.from(obj["tag_ids"]);
     description = obj["description"];
@@ -142,7 +142,7 @@ class ImageResponse {
     thumbUrl = obj["thumb"];
     thumbSmallUrl = obj["thumbsmall"];
     thumbTinyUrl = obj["thumbtiny"];
-    format = ContentFormat.values[ConstStrings.format.indexOf(obj["format"])];
+    format = ContentFormat.values[formatExtensions.indexOf(obj["format"])];
     tags = List<String>.from(const JsonDecoder().convert(obj["tags"]));
     tagids = List<int>.from(const JsonDecoder().convert(obj["tagids"]));
     description = obj["description"];
@@ -167,7 +167,7 @@ class ImageResponse {
         "thumb": thumbUrl,
         "thumbsmall": thumbSmallUrl,
         "thumbtiny": thumbTinyUrl,
-        "format": ConstStrings.format[format.index],
+        "format": formatExtensions[format.index],
         "tags": const JsonEncoder().convert(tags),
         "tagids": const JsonEncoder().convert(tagids),
         "description": description,

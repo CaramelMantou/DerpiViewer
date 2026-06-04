@@ -1,4 +1,4 @@
-import 'package:derpiviewer/models/fav_model.dart';
+import 'package:derpiviewer/ui/providers/favorites_provider.dart';
 import 'package:derpiviewer/ui/providers/search_provider.dart';
 import 'package:derpiviewer/ui/providers/trending_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/helpers/db.dart';
 import 'package:derpiviewer/style/theme.dart';
 import 'package:derpiviewer/core/di/injection_container.dart';
+import 'package:derpiviewer/core/domain/repositories/favorites_repository.dart';
 import 'package:derpiviewer/core/domain/repositories/image_repository.dart';
 import 'l10n/app_localizations.dart';
 
@@ -38,9 +39,11 @@ void main() async {
           update: (context, value, previous) =>
               previous!..onPrefsChanged(value),
         ),
-        ChangeNotifierProxyProvider<PrefModel, FavModel>(
-            create: (context) =>
-                FavModel(Provider.of<PrefModel>(context, listen: false)),
+        ChangeNotifierProxyProvider<PrefModel, FavoritesProvider>(
+            create: (context) => FavoritesProvider(
+              resolve<FavoritesRepository>(),
+              Provider.of<PrefModel>(context, listen: false),
+            ),
             update: (context, value, previous) =>
                 previous!..fetchMore(refresh: true)),
       ],

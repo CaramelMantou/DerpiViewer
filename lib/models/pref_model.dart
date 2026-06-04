@@ -1,6 +1,6 @@
 import 'package:derpiviewer/api/do.dart';
 import 'package:flutter/material.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/booru_config.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/sort_direction.dart';
 import 'package:derpiviewer/core/domain/enums/sort_field.dart';
@@ -8,7 +8,6 @@ import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrefModel extends ChangeNotifier {
-  final Map<Booru, String> _boorus = ConstStrings.boorus;
   final params = PrefParams();
   String key = "";
   Booru booru = Booru.trixie;
@@ -49,10 +48,10 @@ class PrefModel extends ChangeNotifier {
 
   void changeHost(Booru b) {
     booru = b;
-    String fName = ConstStrings.filters[b]!.keys.first;
+    String fName = booruFilters[b]!.keys.first;
     updateParams(
       fn: fName,
-      fid: ConstStrings.filters[b]![fName],
+      fid: booruFilters[b]![fName],
     );
   }
 
@@ -90,12 +89,12 @@ class PrefModel extends ChangeNotifier {
     shareSize = ImageSize.values[tmpShareSize];
     _isDarkMode = prefs.getBool("is_dark_mode") ?? false;
     key = tmpKey;
-    if (!ConstStrings.filters[booru]!.containsKey(tmpFilterName)) {
-      tmpFilterName = ConstStrings.filters[booru]!.keys.first;
+    if (!booruFilters[booru]!.containsKey(tmpFilterName)) {
+      tmpFilterName = booruFilters[booru]!.keys.first;
     }
     updateParams(
         fn: tmpFilterName,
-        fid: ConstStrings.filters[booru]![tmpFilterName],
+        fid: booruFilters[booru]![tmpFilterName],
         pp: tmpPerPage,
         sd: SortDirection.values[tmpSD],
         sf: SortField.values[tmpSF]);

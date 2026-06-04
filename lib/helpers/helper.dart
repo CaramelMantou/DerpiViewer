@@ -1,4 +1,4 @@
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/tag_categories.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/tag_category.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +10,9 @@ void appendClipboard(String local, String text) async {
 }
 
 TagCategory getTagCategory(String tag, int tagid, Booru booru) {
-  if (ConstStrings.ratingTags.contains(tag)) return TagCategory.rating;
-  if (ConstStrings.bodyTags.contains(tag)) return TagCategory.body;
-  if (ConstStrings.errorTags.contains(tag)) return TagCategory.error;
+  if (ratingTags.contains(tag)) return TagCategory.rating;
+  if (bodyTags.contains(tag)) return TagCategory.body;
+  if (errorTags.contains(tag)) return TagCategory.error;
   if (tag.contains("spoiler:")) return TagCategory.spoiler;
   if (tag.contains("artist:")) return TagCategory.artist;
   if (tag.contains("oc:")) return TagCategory.oc;

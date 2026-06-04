@@ -1,4 +1,4 @@
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/booru_config.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/helpers/connect.dart';
@@ -17,7 +17,7 @@ class BasePhilomenaClient {
       {required Booru booru, required int id, String? key}) async {
     Map<String, dynamic> params = {"key": key ?? ""};
     var data = await getData(
-        booru: ConstStrings.boorus[booru] ?? ConstStrings.defaultHost,
+        booru: booruHosts[booru] ?? defaultHost,
         path: "/api/v1/json/images/$id",
         params: params);
     return ImageResponse.fromJson(data["image"], booru);
@@ -27,8 +27,8 @@ class BasePhilomenaClient {
       {required Booru booru, String? key}) async {
     Map<String, dynamic> params = {"key": key ?? ""};
     var data = await getData(
-        booru: ConstStrings.boorus[booru] ?? ConstStrings.defaultHost,
-        path: ConstStrings.trendingPaths[booru] ?? ConstStrings.defaultTP,
+        booru: booruHosts[booru] ?? defaultHost,
+        path: booruTrendingPaths[booru] ?? defaultTrendingPath,
         params: params);
     late Map<String, dynamic> image;
     if (booru == Booru.twi) {
@@ -58,8 +58,8 @@ class BasePhilomenaClient {
       "sf": sortField ?? ""
     };
     var data = await getData(
-        booru: ConstStrings.boorus[booru] ?? ConstStrings.defaultHost,
-        path: ConstStrings.searchPaths[booru] ?? ConstStrings.defaultTP,
+        booru: booruHosts[booru] ?? defaultHost,
+        path: booruSearchPaths[booru] ?? defaultTrendingPath,
         params: params);
     if (data.isEmpty) return [];
     late List<dynamic> images;

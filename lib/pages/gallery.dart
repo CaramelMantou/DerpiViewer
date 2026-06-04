@@ -5,9 +5,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
-import 'package:derpiviewer/models/search_model.dart';
+import 'package:derpiviewer/core/domain/search_interface.dart';
 import 'package:derpiviewer/widgets/toolbar.dart';
 import 'package:derpiviewer/widgets/video_view.dart';
+import 'package:derpiviewer/ui/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -30,6 +31,7 @@ class _GalleryViewState extends State<GalleryView> {
   bool isSlideshowPlaying = false;
   Timer? slideshowTimer;
   final Lock _loadLock = Lock(); // 替换_isLoadingMore的锁
+  final Map<int, int> _retryCounts = {};
 
   @override
   void initState() {
@@ -90,16 +92,22 @@ class _GalleryViewState extends State<GalleryView> {
                   src: _model.getItemUrl(index, _model.getPref().videoSize),
                 );
               } else {
+                final retryKey = _retryCounts[index] ?? 0;
                 return Center(
                     child: CachedNetworkImage(
+                  key: ValueKey('img_${index}_$retryKey'),
                   imageUrl:
                       _model.getItemUrl(index, _model.getPref().imageSize),
                   progressIndicatorBuilder: (context, url, progress) => Center(
                       child: CircularProgressIndicator(
                     value: progress.progress,
                   )),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.error_outline),
+                  errorWidget: (context, url, error) => ErrorView(
+                    message: 'Failed to load image',
+                    onRetry: () => setState(() {
+                      _retryCounts[index] = retryKey + 1;
+                    }),
+                  ),
                   cacheManager: ImageCacheManager(),
                 ));
               }

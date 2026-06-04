@@ -1,6 +1,7 @@
 import 'dart:developer';
 
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/booru_config.dart';
+import 'package:derpiviewer/config/constants.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:flutter/services.dart';
@@ -88,9 +89,9 @@ class DownloadHelper {
   static void shareLink(Booru booru, int id) {
     String? url;
     if (booru == Booru.twi) {
-      url = "${ConstStrings.boorus[booru]}/$id";
+      url = "${booruHosts[booru]}/$id";
     } else {
-      url = "${ConstStrings.boorus[booru]}/images/$id";
+      url = "${booruHosts[booru]}/images/$id";
     }
     Clipboard.setData(ClipboardData(text: url));
   }
@@ -128,8 +129,8 @@ class DownloadHelper {
 
     ShareResult result = await Share.shareXFiles([
       XFile(file.path,
-          name: "$bs-$id.${ConstStrings.format[type.index]}",
-          mimeType: ConstStrings.mime[type.index])
+          name: "$bs-$id.${formatExtensions[type.index]}",
+          mimeType: mimeTypes[type.index])
     ]);
     if (result.status == ShareResultStatus.success) {
       Fluttertoast.showToast(msg: "Shared");

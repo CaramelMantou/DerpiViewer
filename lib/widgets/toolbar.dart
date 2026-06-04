@@ -1,20 +1,23 @@
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/constants.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:derpiviewer/helpers/db.dart';
 import 'package:derpiviewer/helpers/download.dart';
-import 'package:derpiviewer/models/search_model.dart';
+import 'package:derpiviewer/core/domain/search_interface.dart';
 import 'package:derpiviewer/widgets/detail.dart';
 import 'package:derpiviewer/widgets/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:derpiviewer/l10n/app_localizations.dart';
+import 'package:derpiviewer/ui/providers/favorites_provider.dart';
+import 'package:synchronized/synchronized.dart';
 
 class GalleryToolBar extends StatelessWidget {
   final SearchInterface model;
   int index;
   ToolbarController controller;
   FavIconController favController = FavIconController();
+  final Lock _toggleLock = Lock();
   GalleryToolBar(
       {super.key,
       required this.model,
@@ -29,10 +32,16 @@ class GalleryToolBar extends StatelessWidget {
         return Container(
           alignment: Alignment.bottomRight,
           padding: const EdgeInsets.only(bottom: 8, left: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black54.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: [
               Expanded(
                 child: FutureBuilder<bool>(
                   future: DbHelper.getFavorite(
@@ -43,19 +52,35 @@ class GalleryToolBar extends StatelessWidget {
                       child: FavIcon(
                         controller: favController,
                       ),
-                      onTap: () {
-                        favController.toggleFav();
-                        if (favController.value) {
-                          Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!
-                                  .toolbarFavAdded);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!
-                                  .toolbarFavRemoved);
-                        }
-                        DbHelper.putFavorite(model.getBooru(),
-                            model.getItem(index), favController.value);
+                      onTap: () async {
+                        _toggleLock.synchronized(() async {
+                          final newState = !favController.value;
+                          try {
+                            await DbHelper.putFavorite(
+                              model.getBooru(),
+                              model.getItem(index),
+                              newState,
+                            );
+                            favController.value = newState;
+                            if (newState) {
+                              Fluttertoast.showToast(
+                                  msg: AppLocalizations.of(context)!
+                                      .toolbarFavAdded);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: AppLocalizations.of(context)!
+                                      .toolbarFavRemoved);
+                            }
+                            // Notify FavoritesProvider so the list stays
+                            // in sync when the user returns to favourites.
+                            if (model is FavoritesProvider) {
+                              (model as FavoritesProvider).changeFav();
+                            }
+                          } catch (e) {
+                            Fluttertoast.showToast(
+                                msg: AppLocalizations.of(context)!.toolbarFavFailed);
+                          }
+                        });
                       },
                     );
                   },
@@ -77,7 +102,7 @@ class GalleryToolBar extends StatelessWidget {
                       model.getItemUrl(idx, model.getPref().downloadSize),
                       model.getBooru(),
                       model.getItemID(idx),
-                      ConstStrings.format[model.getItemFormat(idx).index]);
+                      formatExtensions[model.getItemFormat(idx).index]);
                   Fluttertoast.showToast(
                       msg: AppLocalizations.of(context)!.toolbarDownloading);
                 },
@@ -168,6 +193,7 @@ class GalleryToolBar extends StatelessWidget {
                         color: Colors.white,
                       )))
             ],
+            ),
           ),
         );
       },

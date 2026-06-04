@@ -3,9 +3,12 @@ import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:derpiviewer/models/pref_model.dart';
-import 'package:flutter/widgets.dart';
 
-abstract class SearchInterface extends ChangeNotifier {
+/// Pure abstract interface for search functionality.
+///
+/// Lives in the domain layer — NO Flutter imports, NO `extends ChangeNotifier`.
+/// Providers implement this interface on top of their own ChangeNotifier extension.
+abstract class SearchInterface {
   int getItemCount();
   int getItemID(int index);
   String getItemUrl(int index, ImageSize imageSize);

@@ -1,6 +1,6 @@
 import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/models/pref_model.dart';
-import 'package:derpiviewer/models/search_model.dart';
+import 'package:derpiviewer/core/domain/search_interface.dart';
 import 'package:derpiviewer/pages/gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';

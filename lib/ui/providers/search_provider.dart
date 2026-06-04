@@ -11,7 +11,7 @@ import 'package:derpiviewer/core/domain/result.dart';
 import 'package:derpiviewer/core/domain/search_params.dart';
 import 'package:derpiviewer/core/domain/view_state.dart';
 import 'package:derpiviewer/models/pref_model.dart';
-import 'package:derpiviewer/models/search_model.dart';
+import 'package:derpiviewer/core/domain/search_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:synchronized/synchronized.dart';
 

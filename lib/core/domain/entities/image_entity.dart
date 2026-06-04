@@ -2,7 +2,7 @@ import 'package:derpiviewer/core/data/dtos/image_dto.dart';
 import 'package:derpiviewer/core/domain/enums/booru.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/core/domain/enums/image_size.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/constants.dart';
 
 /// Domain entity representing an image from a booru.
 ///
@@ -45,7 +45,7 @@ class ImageEntity {
 
   /// Creates an [ImageEntity] from an [ImageDto], resolving raw types.
   factory ImageEntity.fromDto(ImageDto dto, Booru booru) {
-    final formatIndex = ConstStrings.format.indexOf(dto.format);
+    final formatIndex = formatExtensions.indexOf(dto.format);
     final contentFormat = formatIndex >= 0
         ? ContentFormat.values[formatIndex]
         : ContentFormat.jpg;

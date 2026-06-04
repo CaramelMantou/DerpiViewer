@@ -9,7 +9,8 @@ import 'package:derpiviewer/core/domain/failure_type.dart';
 import 'package:derpiviewer/core/domain/repositories/image_repository.dart';
 import 'package:derpiviewer/core/domain/result.dart';
 import 'package:derpiviewer/core/domain/search_params.dart';
-import 'package:derpiviewer/enums.dart';
+import 'package:derpiviewer/config/booru_config.dart';
+import 'package:derpiviewer/config/constants.dart';
 
 /// Concrete implementation of [ImageRepository] using the BooruApiStrategy pattern.
 class ImageRepositoryImpl implements ImageRepository {
@@ -20,7 +21,7 @@ class ImageRepositoryImpl implements ImageRepository {
     String? apiKey,
   }) async {
     try {
-      final host = ConstStrings.boorus[booru] ?? ConstStrings.defaultHost;
+      final host = booruHosts[booru] ?? defaultHost;
       final strategy = BooruApiStrategyFactory.create(booru, host);
       final queryParams = <String, String>{
         if (apiKey != null && apiKey.isNotEmpty) 'key': apiKey,
@@ -56,14 +57,14 @@ class ImageRepositoryImpl implements ImageRepository {
     String? apiKey,
   }) async {
     try {
-      final host = ConstStrings.boorus[booru] ?? ConstStrings.defaultHost;
+      final host = booruHosts[booru] ?? defaultHost;
       final strategy = BooruApiStrategyFactory.create(booru, host);
       final queryParams = <String, String>{
         'q': query,
         'page': '${params.page}',
         'per_page': '${params.perPage}',
-        'sd': ConstStrings.sds[params.sortDirection.index],
-        'sf': ConstStrings.sfs[params.sortField.index],
+        'sd': sortDirections[params.sortDirection.index],
+        'sf': sortFields[params.sortField.index],
       };
       if (apiKey != null && apiKey.isNotEmpty) {
         queryParams['key'] = apiKey;
@@ -103,7 +104,7 @@ class ImageRepositoryImpl implements ImageRepository {
     String? apiKey,
   }) async {
     try {
-      final host = ConstStrings.boorus[booru] ?? ConstStrings.defaultHost;
+      final host = booruHosts[booru] ?? defaultHost;
       final strategy = BooruApiStrategyFactory.create(booru, host);
       final queryParams = <String, String>{
         if (apiKey != null && apiKey.isNotEmpty) 'key': apiKey,

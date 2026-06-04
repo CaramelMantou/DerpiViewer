@@ -13,7 +13,7 @@ class BooruApiStrategyFactory {
   /// Returns the correct [BooruApiStrategy] for a given [Booru].
   ///
   /// The [host] parameter allows callers to provide the booru's host string
-  /// (from ConstStrings) at the call site, keeping this factory host-agnostic.
+  /// (from booru_config.dart) at the call site, keeping this factory host-agnostic.
   static BooruApiStrategy create(Booru booru, String host) {
     switch (booru) {
       case Booru.twi:
