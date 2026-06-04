@@ -4,7 +4,7 @@ baseline_commit: 94b4ac096bb075b32ba6ee2b0352db7c5010d438
 
 # Story 3.2: Dark Mode Tag Contrast Fix and Theme Transition Animation
 
-Status: review
+Status: done
 
 ## Story
 
