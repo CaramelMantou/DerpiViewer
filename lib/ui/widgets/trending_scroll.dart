@@ -33,9 +33,13 @@ class _TrendingScrollState extends State<TrendingScroll> {
     _scrollController.addListener(_scrollCallback);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      Provider.of<TrendingProvider>(context, listen: false)
-          .fetchMore(refresh: true)
-          .catchError((Object e) {
+      final trending = Provider.of<TrendingProvider>(context, listen: false);
+      // Skip if onPrefsChanged already triggered initial load (avoids
+      // double fetch + skeleton flicker). SuccessState = already loaded;
+      // LoadingState = onPrefsChanged's fetchMore is in progress.
+      if (trending.state is SuccessState) return;
+      if (trending.state is LoadingState) return;
+      trending.fetchMore(refresh: true).catchError((Object e) {
         log('Initial trending fetch failed', error: e);
         return null;
       });

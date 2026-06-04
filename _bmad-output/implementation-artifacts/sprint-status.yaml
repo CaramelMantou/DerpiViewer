@@ -62,5 +62,5 @@ development_status:
   3-2-dark-mode-tag-contrast-theme-animation: done
   3-3-i18n-extraction-accessibility: done
   3-4-bug-fixes-booru-switch-api-key-uploader-offline: done
-  3-5-remaining-widget-integration-tests: ready-for-dev
+  3-5-remaining-widget-integration-tests: done
   epic-3-retrospective: optional

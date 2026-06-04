@@ -64,10 +64,12 @@ class TrendingProvider extends SearchProvider {
     log('TrendingProvider.fetchMore refresh=$refresh');
 
     await fetchLock.synchronized(() async {
-      // Guard: allow refresh through, block load-more when loading
+      // Guard: allow refresh through, block load-more when loading.
+      // Note: the refresh guard (state is LoadingState) is not present —
+      // onPrefsChanged sets LoadingState before calling fetchMore to clear
+      // stale data immediately; the fetchLock already serializes access.
       if (!hasMore && !refresh) return;
       if (!refresh && (_isLoadingMore || state is LoadingState)) return;
-      if (refresh && state is LoadingState) return;
 
       if (refresh) {
         _featuredState = const LoadingState();

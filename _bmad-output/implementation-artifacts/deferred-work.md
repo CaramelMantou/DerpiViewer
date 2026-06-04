@@ -61,3 +61,14 @@
 - GestureDetector touch target below 48dp — uploader name tap area at ~22dp with fontSize 18; fails Material Design minimum 48x48dp accessibility requirement. [`lib/widgets/detail.dart:63-78`]
 - SearchProvider lacks CancelToken — user-initated searches not cancelled on booru switch; by design per dev notes (only TrendingProvider handles booru-switch cancellation). [`lib/ui/providers/search_provider.dart:99`]
 - Consumer\<ConnectivityProvider\> rebuilds entire Scaffold — connectivity change triggers unnecessary full Scaffold rebuild including AppBar/Drawer/FABs. [`lib/pages/home_page.dart:74`]
+
+## Deferred from: code review of 3-5-remaining-widget-integration-tests (2026-06-05)
+
+- `_testImage()` uses 22 positional args — pre-existing `ImageResponse` design; constructor refactoring is outside Story 3.5 scope. [`test/ui/widgets/detail_sheet_test.dart`]
+- Tag colour tests validate helper function, not widget rendering — utility-level assertions inside `pumpWidget`; acceptable for current coverage baseline. [`test/ui/widgets/detail_sheet_test.dart:83-114`]
+- GestureDetector test does not verify uploader text specifically wrapped — `find.byType(GestureDetector)` matches any GestureDetector in tree; minor false-positive risk. [`test/ui/widgets/detail_sheet_test.dart:158-167`]
+- HomeDrawer test is constructor-type check — does not pump widget or verify l10n strings; blocked by SkeletonGrid non-Sliver pre-existing issue. [`test/ui/pages/home_page_test.dart:69-73`]
+- AC2 partial — PrefModel/ConnectivityProvider unit-tested but full widget integration pending fix for SkeletonGrid non-Sliver. [`test/ui/pages/home_page_test.dart`]
+- Integration test skeletons empty — `IntegrationTestWidgetsFlutterBinding` wired but bodies are comments; full flow requires mock HTTP infrastructure (future work). [`integration_test/`]
+- `PrefModel.getPref()` never awaited in constructor or tests — reads fields before async init completes; works by coincidence with mock SharedPreferences. [`lib/models/pref_model.dart:45-47`]
+- `currentPage` set redundantly in both `onPrefsChanged` and `fetchMore` — double source-of-truth; harmless but fragile for future refactoring. [`lib/ui/providers/trending_provider.dart:49,81-82`]
