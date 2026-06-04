@@ -25,18 +25,30 @@ class SearchProvider extends ChangeNotifier implements SearchInterface {
   final ImageRepository _repository;
   final PrefModel _prefProvider;
 
+  /// Exposed for subclass access without breaking encapsulation.
+  ImageRepository get repository => _repository;
+  PrefModel get prefProvider => _prefProvider;
+
   ViewState<List<ImageEntity>> _state = const LoadingState();
   ViewState<List<ImageEntity>> get state => _state;
+  set state(ViewState<List<ImageEntity>> value) => _state = value;
 
   final Lock _fetchLock = Lock();
+  Lock get fetchLock => _fetchLock;
 
   String _query = '';
   String get query => _query;
   int _page = 1;
+  int get currentPage => _page;
+  set currentPage(int value) => _page = value;
   bool _hasMore = true;
+  bool get hasMore => _hasMore;
+  set hasMore(bool value) => _hasMore = value;
 
   /// The current image data — only valid when state is [SuccessState].
   List<ImageEntity> _images = [];
+  List<ImageEntity> get images => _images;
+  set images(List<ImageEntity> value) => _images = value;
 
   SearchProvider(this._repository, this._prefProvider);
 

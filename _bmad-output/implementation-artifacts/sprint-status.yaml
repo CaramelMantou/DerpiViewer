@@ -47,7 +47,7 @@ development_status:
   1-2-repository-interfaces-booru-api-strategy: done
   1-3-repository-impl-dio-interceptors: done
   1-4-search-provider-viewstate-skeleton-empty-retry: done
-  1-5-trending-provider-viewstate-skeleton-scroll-fix: ready-for-dev
+  1-5-trending-provider-viewstate-skeleton-scroll-fix: done
   1-6-epic-1-tests: ready-for-dev
   epic-1-retrospective: optional
 
