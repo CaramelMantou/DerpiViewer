@@ -194,8 +194,8 @@ class _DetailSheetState extends State<DetailSheet> {
                   child: Chip(
                     label: Text(_tags[index],
                         style:
-                            TextStyle(color: tagForeColors[tc])),
-                    backgroundColor: tagBackColors[tc],
+                            TextStyle(color: tagForeColor(tc, Theme.of(context).brightness))),
+                    backgroundColor: tagBackColors[tc] ?? Colors.grey,
                   ));
             }))
       ],

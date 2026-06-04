@@ -65,6 +65,8 @@ class DVApp extends StatelessWidget {
           theme: AppTheme.defaultTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: prefModel.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeAnimationDuration: const Duration(milliseconds: 300),
+          themeAnimationCurve: Curves.easeInOut,
           home: const HomePage(),
         );
       },
