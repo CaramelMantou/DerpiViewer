@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:derpiviewer/config/booru_config.dart';
 import 'package:derpiviewer/helpers/db.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/pages/fav_page.dart';
 import 'package:derpiviewer/pages/search_page.dart';
@@ -24,6 +25,13 @@ class HomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<HomePage> {
   final ReceivePort _port = ReceivePort();
+  String _downloadMsg = 'Download complete';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _downloadMsg = AppLocalizations.of(context)!.downloadComplete;
+  }
 
   @override
   void initState() {
@@ -34,7 +42,7 @@ class _MyHomePageState extends State<HomePage> {
       DownloadTaskStatus status = DownloadTaskStatus.fromInt(data[1]);
       int progress = data[2];
       if (status == DownloadTaskStatus.complete) {
-        Fluttertoast.showToast(msg: "Downloaded");
+        Fluttertoast.showToast(msg: _downloadMsg);
       }
       log("$progress");
     });
@@ -80,7 +88,11 @@ class _MyHomePageState extends State<HomePage> {
                           builder: (context) => const FavouritePage()));
                 },
                 heroTag: "fav-fab",
-                child: const Icon(Icons.favorite),
+                tooltip: AppLocalizations.of(context)!.tooltipFavorites,
+                child: Semantics(
+                  label: AppLocalizations.of(context)!.tooltipFavorites,
+                  child: const Icon(Icons.favorite),
+                ),
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
@@ -91,7 +103,11 @@ class _MyHomePageState extends State<HomePage> {
                           builder: (context) => const SearchPage()));
                 }),
                 heroTag: "sch-fab",
-                child: const Icon(Icons.search),
+                tooltip: AppLocalizations.of(context)!.tooltipSearch,
+                child: Semantics(
+                  label: AppLocalizations.of(context)!.tooltipSearch,
+                  child: const Icon(Icons.search),
+                ),
               ),
             ],
           ),

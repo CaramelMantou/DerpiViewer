@@ -42,3 +42,13 @@
 - _retryCounts map grows without bound — no eviction policy; practical impact minimal (one int per failed index). Acknowledged in previous deferred-work entry. [`lib/pages/gallery.dart:34`]
 - SearchProvider error handling differs from FavoritesProvider — on pagination error, SearchProvider replaces entire grid with ErrorView (losing loaded pages) while FavoritesProvider preserves existing data. Pre-existing pattern. [`lib/ui/providers/search_provider.dart:165-168`]
 - No format-string fallback in ImageResponse constructors vs ImageEntity — ImageResponse crashes on unrecognized format strings from API (`indexOf` returns -1), while ImageEntity gracefully degrades with `>= 0` guard. Pre-existing inconsistency. [`lib/api/do.dart:75,125`]
+
+## Deferred from: code review of 3-3-i18n-extraction-accessibility (2026-06-05)
+
+- _downloadMsg race condition — Port listener in initState() starts before didChangeDependencies sets locale; theoretical window where English fallback shows in non-English locale. [`lib/pages/home_page.dart:28-48`]
+- NumberFormat/DateFormat rebuilt every frame — Created inside build() of a ListView; minor performance concern, not blocking. [`lib/widgets/detail.dart:34-35`]
+- AppLocalizations.of(context)! crashes on unsupported locales — App only supports en/zh; other device locales would crash. Pre-existing architectural decision. [multiple files]
+- Missing await on ImageCacheManager().emptyCache() — "Clear All" handler doesn't await image cache clear, toast fires before completion. Pre-existing bug. [`lib/ui/widgets/dialogs/cache_dialog.dart:37`]
+- AppLocalizations in async callbacks — toolbar.dart uses AppLocalizations.of(context)! inside onTap/onPressed callbacks with potentially stale context. Pre-existing pattern. [`lib/widgets/toolbar.dart`]
+- Stale slider label during drag — ChangeSlideIntervalDialog StatelessWidget doesn't rebuild on slider changes. Pre-existing UX. [`lib/ui/widgets/dialogs/slideshow_dialog.dart`]
+- Minimal l10n test coverage — Test only checks widget existence, not localized string content. Nice-to-have improvement. [`test/ui/widgets/gallery_toolbar_scrim_test.dart`]

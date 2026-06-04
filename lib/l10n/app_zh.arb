@@ -54,5 +54,52 @@
   "sortFieldWidth": "图片宽度",
   "sortFieldHeight": "图片高度",
   "sortFieldComments": "评论数",
-  "sortFieldTagCount": "标签数"
+  "sortFieldTagCount": "标签数",
+  "drawerClearCache": "清除缓存",
+  "drawerClearCacheDescription": "清除图片和视频缓存",
+  "drawerAbout": "关于",
+  "drawerSingleColumn": "单列模式",
+  "drawerSlideshowInterval": "幻灯片间隔",
+  "drawerSlideshowIntervalValue": "{seconds, plural, other{{seconds}秒}}",
+  "@drawerSlideshowIntervalValue": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "drawerDarkMode": "夜间模式",
+  "cacheDialogTitle": "清除缓存",
+  "cacheClearImages": "清除图片缓存",
+  "cacheImagesCleared": "图片缓存已清除",
+  "cacheClearVideos": "清除视频缓存",
+  "cacheVideosCleared": "视频缓存已清除",
+  "cacheClearAll": "清除所有缓存",
+  "cacheAllCleared": "所有缓存已清除",
+  "slideshowDialogTitle": "设置幻灯片间隔",
+  "slideshowCurrentInterval": "当前间隔: {interval}",
+  "@slideshowCurrentInterval": {
+    "placeholders": {
+      "interval": {"type": "String"}
+    }
+  },
+  "slideshowIntervalValue": "{seconds, plural, other{{seconds}秒}}",
+  "@slideshowIntervalValue": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "dialogOk": "确定",
+  "searchHint": "搜索...",
+  "tooltipBack": "返回",
+  "tooltipClear": "清除",
+  "tooltipSearch": "搜索",
+  "tooltipFavorites": "收藏",
+  "tooltipFavoriteToggle": "切换收藏",
+  "tooltipDownload": "下载",
+  "tooltipShare": "分享",
+  "tooltipInfo": "详情",
+  "tooltipSlideshowPlay": "播放幻灯片",
+  "tooltipSlideshowPause": "暂停幻灯片",
+  "tooltipClearField": "清除输入",
+  "downloadComplete": "下载完成",
+  "trendingEmpty": "暂无热门图片"
 }

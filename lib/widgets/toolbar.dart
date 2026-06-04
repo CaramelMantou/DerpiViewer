@@ -49,8 +49,12 @@ class GalleryToolBar extends StatelessWidget {
                   builder: (context, snapshot) {
                     favController.value = snapshot.data ?? false;
                     return GestureDetector(
-                      child: FavIcon(
-                        controller: favController,
+                      child: Tooltip(
+                        message: AppLocalizations.of(context)!
+                            .tooltipFavoriteToggle,
+                        child: FavIcon(
+                          controller: favController,
+                        ),
                       ),
                       onTap: () async {
                         _toggleLock.synchronized(() async {
@@ -88,6 +92,7 @@ class GalleryToolBar extends StatelessWidget {
               ),
               Expanded(
                   child: IconButton(
+                tooltip: AppLocalizations.of(context)!.tooltipDownload,
                 icon: const Icon(
                   Icons.download,
                   color: Colors.white,
@@ -109,6 +114,7 @@ class GalleryToolBar extends StatelessWidget {
               )),
               Expanded(
                   child: IconButton(
+                      tooltip: AppLocalizations.of(context)!.tooltipShare,
                       onPressed: () {
                         showModalBottomSheet(
                             context: context,
@@ -179,6 +185,7 @@ class GalleryToolBar extends StatelessWidget {
                       ))),
               Expanded(
                   child: IconButton(
+                      tooltip: AppLocalizations.of(context)!.tooltipInfo,
                       onPressed: () {
                         showModalBottomSheet(
                             context: context,

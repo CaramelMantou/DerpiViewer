@@ -26,6 +26,7 @@ class ChangeKeyDialog extends StatelessWidget {
                       labelText: "API Key",
                       icon: const Icon(Icons.key),
                       suffixIcon: IconButton(
+                          tooltip: AppLocalizations.of(context)!.tooltipClearField,
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             textController.clear();

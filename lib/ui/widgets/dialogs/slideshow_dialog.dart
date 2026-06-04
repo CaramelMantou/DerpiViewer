@@ -1,3 +1,4 @@
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:flutter/material.dart';
 
@@ -7,18 +8,19 @@ class ChangeSlideIntervalDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('设置幻灯片间隔'),
+      title: Text(l10n.slideshowDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('当前间隔: ${pref.slideInterval}秒'),
+          Text(l10n.slideshowCurrentInterval('${pref.slideInterval}')),
           Slider(
             value: pref.slideInterval.toDouble(),
             min: 1,
             max: 30,
             divisions: 29,
-            label: '${pref.slideInterval}秒',
+            label: l10n.slideshowIntervalValue(pref.slideInterval),
             onChanged: (value) {
               pref.setSlideInterval(value.round());
             },
@@ -28,7 +30,7 @@ class ChangeSlideIntervalDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('确定'),
+          child: Text(l10n.dialogOk),
         ),
       ],
     );

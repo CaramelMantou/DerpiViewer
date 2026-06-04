@@ -1,4 +1,5 @@
 import 'package:derpiviewer/core/domain/enums/booru.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/widgets/toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +21,8 @@ void main() {
     testWidgets('renders with icon buttons present', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: GalleryToolBar(
               model: mockModel,

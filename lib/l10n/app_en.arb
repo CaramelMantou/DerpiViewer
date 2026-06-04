@@ -43,5 +43,52 @@
   "sortFieldWidth": "Width",
   "sortFieldHeight": "Height",
   "sortFieldComments": "Comments",
-  "sortFieldTagCount": "Tag Count"
+  "sortFieldTagCount": "Tag Count",
+  "drawerClearCache": "Clear Cache",
+  "drawerClearCacheDescription": "Clear image and video cache",
+  "drawerAbout": "About",
+  "drawerSingleColumn": "Single Column Mode",
+  "drawerSlideshowInterval": "Slideshow Interval",
+  "drawerSlideshowIntervalValue": "{seconds, plural, =1{1 second} other{{seconds} seconds}}",
+  "@drawerSlideshowIntervalValue": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "drawerDarkMode": "Dark Mode",
+  "cacheDialogTitle": "Clear Cache",
+  "cacheClearImages": "Clear Image Cache",
+  "cacheImagesCleared": "Image cache cleared",
+  "cacheClearVideos": "Clear Video Cache",
+  "cacheVideosCleared": "Video cache cleared",
+  "cacheClearAll": "Clear All Cache",
+  "cacheAllCleared": "All cache cleared",
+  "slideshowDialogTitle": "Set Slideshow Interval",
+  "slideshowCurrentInterval": "Current interval: {interval}",
+  "@slideshowCurrentInterval": {
+    "placeholders": {
+      "interval": {"type": "String"}
+    }
+  },
+  "slideshowIntervalValue": "{seconds, plural, =1{1 sec} other{{seconds} secs}}",
+  "@slideshowIntervalValue": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "dialogOk": "OK",
+  "searchHint": "Search...",
+  "tooltipBack": "Back",
+  "tooltipClear": "Clear",
+  "tooltipSearch": "Search",
+  "tooltipFavorites": "Favorites",
+  "tooltipFavoriteToggle": "Toggle favorite",
+  "tooltipDownload": "Download",
+  "tooltipShare": "Share",
+  "tooltipInfo": "Details",
+  "tooltipSlideshowPlay": "Play slideshow",
+  "tooltipSlideshowPause": "Pause slideshow",
+  "tooltipClearField": "Clear field",
+  "downloadComplete": "Download complete",
+  "trendingEmpty": "No trending images available"
 }

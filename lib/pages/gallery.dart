@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:derpiviewer/core/domain/enums/content_format.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/core/domain/search_interface.dart';
 import 'package:derpiviewer/widgets/toolbar.dart';
@@ -80,6 +81,7 @@ class _GalleryViewState extends State<GalleryView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
         body: Stack(children: [
       PhotoViewGallery.builder(
@@ -131,6 +133,9 @@ class _GalleryViewState extends State<GalleryView> {
         top: 32.0,
         right: 16.0,
         child: IconButton(
+          tooltip: isSlideshowPlaying
+              ? l10n.tooltipSlideshowPause
+              : l10n.tooltipSlideshowPlay,
           icon: Icon(
             isSlideshowPlaying ? Icons.pause : Icons.play_arrow,
             color: Colors.grey[600],

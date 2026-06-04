@@ -32,6 +32,8 @@ class _DetailSheetState extends State<DetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final numberFormat = NumberFormat.decimalPattern(locale.languageCode);
     return ListView(
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
       children: [
@@ -60,7 +62,7 @@ class _DetailSheetState extends State<DetailSheet> {
         Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              DateFormat('yyyy-MM-dd HH:mm')
+              DateFormat.yMd(locale.languageCode).add_jm()
                   .format(DateTime.parse(_image.createdAt)),
             )),
         const SizedBox(
@@ -115,7 +117,7 @@ class _DetailSheetState extends State<DetailSheet> {
                     Icons.thumb_up,
                     color: Colors.green,
                   ),
-                  Text("${_image.upvotes}",
+                  Text(numberFormat.format(_image.upvotes),
                       style: const TextStyle(
                           color: Colors.green, fontWeight: FontWeight.bold)),
                 ],
@@ -129,7 +131,7 @@ class _DetailSheetState extends State<DetailSheet> {
                     Icons.thumb_down,
                     color: Colors.red,
                   ),
-                  Text("${_image.downvotes}",
+                  Text(numberFormat.format(_image.downvotes),
                       style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
@@ -146,7 +148,7 @@ class _DetailSheetState extends State<DetailSheet> {
                     color: Colors.yellow[800],
                   ),
                   Text(
-                    "${_image.faves}",
+                    numberFormat.format(_image.faves),
                     style: TextStyle(
                         color: Colors.yellow[800], fontWeight: FontWeight.bold),
                   ),
@@ -161,7 +163,7 @@ class _DetailSheetState extends State<DetailSheet> {
                     Icons.comment,
                     color: Colors.purple[200],
                   ),
-                  Text("${_image.comments}",
+                  Text(numberFormat.format(_image.comments),
                       style: TextStyle(
                         color: Colors.purple[200],
                         fontWeight: FontWeight.bold,

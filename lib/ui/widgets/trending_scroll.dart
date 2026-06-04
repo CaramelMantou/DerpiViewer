@@ -6,6 +6,7 @@ import 'package:derpiviewer/core/domain/entities/image_entity.dart';
 import 'package:derpiviewer/core/domain/enums/image_size.dart';
 import 'package:derpiviewer/core/domain/view_state.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/pages/search_page.dart';
 import 'package:derpiviewer/ui/providers/trending_provider.dart';
 import 'package:derpiviewer/ui/widgets/error_view.dart';
@@ -174,10 +175,10 @@ class _TrendingScrollState extends State<TrendingScroll> {
 
   Widget _buildSuccessGrid(TrendingProvider trending, List<ImageEntity> images) {
     if (images.isEmpty) {
-      return const SliverFillRemaining(
-        key: ValueKey('empty_grid'),
+      return SliverFillRemaining(
+        key: const ValueKey('empty_grid'),
         child: Center(
-          child: Text('No trending images available'),
+          child: Text(AppLocalizations.of(context)!.trendingEmpty),
         ),
       );
     }

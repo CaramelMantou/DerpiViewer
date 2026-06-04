@@ -1,3 +1,4 @@
+import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/ui/providers/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:derpiviewer/pages/result_page.dart';
@@ -57,10 +58,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            tooltip: 'Back',
+            tooltip: l10n.tooltipBack,
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop(null);
@@ -72,7 +74,7 @@ class _SearchPageState extends State<SearchPage> {
             onSubmitted: ((value) => showResult(value)),
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-                hintText: '搜索...',
+                hintText: l10n.searchHint,
                 border: InputBorder.none,
                 hintStyle: TextStyle(color: Theme.of(context).iconTheme.color)),
             backgroundColor: Theme.of(context).chipTheme.backgroundColor,
@@ -88,14 +90,14 @@ class _SearchPageState extends State<SearchPage> {
           ),
           actions: [
             IconButton(
-              tooltip: 'Clear',
+              tooltip: l10n.tooltipClear,
               icon: const Icon(Icons.clear),
               onPressed: () {
                 _textController.clear();
               },
             ),
             IconButton(
-              tooltip: 'Search',
+              tooltip: l10n.tooltipSearch,
               icon: Icon(
                 Icons.search,
                 color: _isSearchEnabled

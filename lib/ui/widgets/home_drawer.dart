@@ -72,8 +72,9 @@ class HomeDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: const Text('清除缓存'),
-          subtitle: const Text('清除图片和视频缓存', style: TextStyle(fontSize: 12.0)),
+          title: Text(AppLocalizations.of(context)!.drawerClearCache),
+          subtitle: Text(AppLocalizations.of(context)!.drawerClearCacheDescription,
+              style: const TextStyle(fontSize: 12.0)),
           leading: const Icon(Icons.cached),
           onTap: () {
             showDialog(
@@ -85,7 +86,7 @@ class HomeDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: const Text('关于'),
+          title: Text(AppLocalizations.of(context)!.drawerAbout),
           leading: const Icon(Icons.info),
           onTap: () {
             showDialog(
@@ -97,7 +98,7 @@ class HomeDrawer extends StatelessWidget {
           },
         ),
         ListTile(
-          title: const Text('单列模式'),
+          title: Text(AppLocalizations.of(context)!.drawerSingleColumn),
           leading: const Icon(Icons.view_column),
           trailing: Consumer<PrefModel>(
             builder: (context, pref, child) => Switch(
@@ -111,10 +112,11 @@ class HomeDrawer extends StatelessWidget {
         ),
         // 添加幻灯片间隔设置
         ListTile(
-          title: const Text('幻灯片间隔'),
+          title: Text(AppLocalizations.of(context)!.drawerSlideshowInterval),
           leading: const Icon(Icons.slideshow),
           subtitle: Consumer<PrefModel>(
-            builder: (context, pref, child) => Text('${pref.slideInterval}秒'),
+            builder: (context, pref, child) => Text(
+                AppLocalizations.of(context)!.drawerSlideshowIntervalValue(pref.slideInterval)),
           ),
           onTap: () {
             showDialog(
@@ -137,7 +139,7 @@ class HomeDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '夜间模式',
+                    AppLocalizations.of(context)!.drawerDarkMode,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   Consumer<PrefModel>(
