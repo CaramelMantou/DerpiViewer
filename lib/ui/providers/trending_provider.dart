@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:derpiviewer/core/domain/entities/image_entity.dart';
 import 'package:derpiviewer/core/domain/failure_type.dart';
 import 'package:derpiviewer/core/domain/repositories/image_repository.dart';
@@ -27,6 +28,9 @@ class TrendingProvider extends SearchProvider {
   bool _isLoadingMore = false;
   bool get isLoadingMore => _isLoadingMore;
 
+  /// Cancels in-flight API requests on booru switch (Story 3.4 / AC:1).
+  CancelToken? _cancelToken;
+
   TrendingProvider(ImageRepository repository, PrefModel prefs)
       : super(repository, prefs);
 
@@ -34,6 +38,17 @@ class TrendingProvider extends SearchProvider {
   /// Called from [ChangeNotifierProxyProvider.update].
   @override
   void onPrefsChanged(PrefModel prefs) {
+    // Cancel all in-flight requests from the previous booru
+    _cancelToken?.cancel('Booru switched');
+    _cancelToken = CancelToken();
+    // Clear old booru data immediately
+    images = [];
+    hasMore = true;
+    currentPage = 1;
+    _featuredState = const LoadingState();
+    state = const LoadingState();
+    notifyListeners();
+    // Fetch new booru data
     unawaited(fetchMore(refresh: true).catchError((Object e) {
       log('TrendingProvider.onPrefsChanged fetchMore failed', error: e);
       return null;
@@ -64,12 +79,16 @@ class TrendingProvider extends SearchProvider {
       final savedPage = currentPage;
       currentPage = refresh ? 1 : currentPage + 1;
 
+      // Ensure cancel token exists for this fetch session
+      _cancelToken ??= CancelToken();
+
       try {
         // Fetch featured image on refresh (first load)
         if (refresh) {
           final featured = await repository.getFeaturedImage(
             prefProvider.booru,
             apiKey: prefProvider.key,
+            cancelToken: _cancelToken,
           );
           _featuredState = switch (featured) {
             Success(data: final img) => SuccessState(img),
@@ -90,6 +109,7 @@ class TrendingProvider extends SearchProvider {
             page: currentPage,
           ),
           apiKey: prefProvider.key,
+          cancelToken: _cancelToken,
         );
 
         switch (result) {
@@ -125,6 +145,30 @@ class TrendingProvider extends SearchProvider {
               notifyListeners();
               throw FetchMoreException(msg, type);
             }
+        }
+      } on DioError catch (e) {
+        if (e.type == DioErrorType.cancel) {
+          // Request cancelled (booru switch) — silently ignore
+          log('TrendingProvider.fetchMore cancelled', error: e);
+          currentPage = savedPage;
+          // Preserve existing data if we have any; otherwise stay in
+          // LoadingState (the new fetchMore from onPrefsChanged will update it)
+          if (images.isNotEmpty) {
+            state = SuccessState(images);
+          }
+          return;
+        }
+        log('TrendingProvider.fetchMore Dio error', error: e);
+        currentPage = savedPage;
+        if (refresh || images.isEmpty) {
+          state = FailureState(
+              'Network error: ${e.message}', FailureType.network);
+        } else {
+          hasMore = true;
+          _isLoadingMore = false;
+          notifyListeners();
+          throw FetchMoreException(
+              'Network error: ${e.message}', FailureType.network);
         }
       } catch (e) {
         if (e is FetchMoreException) {

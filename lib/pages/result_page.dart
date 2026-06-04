@@ -1,5 +1,7 @@
+import 'package:derpiviewer/core/domain/failure_type.dart';
 import 'package:derpiviewer/core/domain/view_state.dart';
 import 'package:derpiviewer/ui/providers/search_provider.dart';
+import 'package:derpiviewer/ui/widgets/dialogs/api_key_dialog.dart';
 import 'package:derpiviewer/ui/widgets/error_view.dart';
 import 'package:derpiviewer/ui/widgets/skeleton_grid.dart';
 import 'package:derpiviewer/widgets/image_grid.dart';
@@ -34,6 +36,7 @@ class ResultScroll extends StatefulWidget {
 
 class _ResultScrollState extends State<ResultScroll> {
   late ScrollController _scrollController;
+  bool _apiSnackbarShown = false;
   @override
   void initState() {
     _scrollController = ScrollController();
@@ -59,8 +62,12 @@ class _ResultScrollState extends State<ResultScroll> {
     return Consumer<SearchProvider>(
       builder: (context, provider, child) {
         return switch (provider.state) {
-          LoadingState() => const SkeletonGrid(),
+          LoadingState() => () {
+              _apiSnackbarShown = false;
+              return const SkeletonGrid();
+            }(),
           SuccessState(data: final images) => () {
+              _apiSnackbarShown = false;
               if (images.isEmpty) {
                 return _buildEmptyState(context, provider);
               }
@@ -71,12 +78,39 @@ class _ResultScrollState extends State<ResultScroll> {
                 controller: _scrollController,
               );
             }(),
-          FailureState(message: final msg, type: final _) => ErrorView(
-              message: msg,
-              onRetry: () => provider.newSearch(provider.query),
-            ),
+          FailureState(message: final msg, type: final type) => () {
+              if (type == FailureType.api && !_apiSnackbarShown) {
+                _apiSnackbarShown = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) _showApiKeySnackbar(context);
+                });
+              }
+              return ErrorView(
+                  message: msg,
+                  onRetry: () => provider.newSearch(provider.query),
+                );
+            }(),
         };
       },
+    );
+  }
+
+  void _showApiKeySnackbar(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: const Text('API key rejected. Update it in Settings.'),
+        action: SnackBarAction(
+          label: 'Settings',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => const ChangeKeyDialog(),
+            );
+          },
+        ),
+        duration: const Duration(seconds: 6),
+      ),
     );
   }
 

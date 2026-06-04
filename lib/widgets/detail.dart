@@ -1,6 +1,7 @@
 import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/config/tag_categories.dart';
 import 'package:derpiviewer/helpers/helper.dart';
+import 'package:derpiviewer/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,12 +54,31 @@ class _DetailSheetState extends State<DetailSheet> {
                 )))),
         Align(
             alignment: Alignment.centerLeft,
-            child: Text(
-                _image.uploader == "" ? "Background Pony" : _image.uploader,
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 40, 135, 203)))),
+            child: _image.uploader.isEmpty
+                ? const Text('Background Pony',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 40, 135, 203)))
+                : GestureDetector(
+                    onTap: () {
+                      final escapedName =
+                          _image.uploader.replaceAll('"', '\\"');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SearchPage(
+                              initQuery: 'uploader:"$escapedName"'),
+                        ),
+                      );
+                    },
+                    child: Text(_image.uploader,
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 40, 135, 203),
+                            decoration: TextDecoration.underline)),
+                  )),
         Align(
             alignment: Alignment.centerLeft,
             child: Text(

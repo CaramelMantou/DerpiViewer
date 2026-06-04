@@ -19,6 +19,7 @@ class ImageRepositoryImpl implements ImageRepository {
     Booru booru,
     int id, {
     String? apiKey,
+    CancelToken? cancelToken,
   }) async {
     try {
       final host = booruHosts[booru] ?? defaultHost;
@@ -33,11 +34,12 @@ class ImageRepositoryImpl implements ImageRepository {
         queryParameters: queryParams.isEmpty ? null : queryParams,
       );
       log(uri.toString());
-      final response = await strategy.dio.getUri(uri);
+      final response = await strategy.dio.getUri(uri, cancelToken: cancelToken);
       final data = response.data as Map<String, dynamic>;
       final dto = strategy.parseImage(data);
       return Success<ImageEntity>(ImageEntity.fromDto(dto, booru));
     } on DioError catch (e) {
+      if (e.type == DioErrorType.cancel) rethrow;
       log('ImageRepository getImage error: ${e.message}', error: e);
       return mapDioError(e) as Failure<ImageEntity>;
     } catch (e) {
@@ -55,6 +57,7 @@ class ImageRepositoryImpl implements ImageRepository {
     required String query,
     required SearchParams params,
     String? apiKey,
+    CancelToken? cancelToken,
   }) async {
     try {
       final host = booruHosts[booru] ?? defaultHost;
@@ -79,7 +82,7 @@ class ImageRepositoryImpl implements ImageRepository {
         queryParameters: queryParams,
       );
       log(uri.toString());
-      final response = await strategy.dio.getUri(uri);
+      final response = await strategy.dio.getUri(uri, cancelToken: cancelToken);
       final data = response.data as Map<String, dynamic>;
       if (data.isEmpty) return const Success<List<ImageEntity>>([]);
       final dtos = strategy.parseImageList(data);
@@ -87,6 +90,7 @@ class ImageRepositoryImpl implements ImageRepository {
           dtos.map((d) => ImageEntity.fromDto(d, booru)).toList(growable: false);
       return Success<List<ImageEntity>>(entities);
     } on DioError catch (e) {
+      if (e.type == DioErrorType.cancel) rethrow;
       log('ImageRepository search error: ${e.message}', error: e);
       return mapDioError(e) as Failure<List<ImageEntity>>;
     } catch (e) {
@@ -102,6 +106,7 @@ class ImageRepositoryImpl implements ImageRepository {
   Future<Result<ImageEntity>> getFeaturedImage(
     Booru booru, {
     String? apiKey,
+    CancelToken? cancelToken,
   }) async {
     try {
       final host = booruHosts[booru] ?? defaultHost;
@@ -116,11 +121,12 @@ class ImageRepositoryImpl implements ImageRepository {
         queryParameters: queryParams.isEmpty ? null : queryParams,
       );
       log(uri.toString());
-      final response = await strategy.dio.getUri(uri);
+      final response = await strategy.dio.getUri(uri, cancelToken: cancelToken);
       final data = response.data as Map<String, dynamic>;
       final dto = strategy.parseFeatured(data);
       return Success<ImageEntity>(ImageEntity.fromDto(dto, booru));
     } on DioError catch (e) {
+      if (e.type == DioErrorType.cancel) rethrow;
       log('ImageRepository featured error: ${e.message}', error: e);
       return mapDioError(e) as Failure<ImageEntity>;
     } catch (e) {

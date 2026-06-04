@@ -1,3 +1,4 @@
+import 'package:derpiviewer/ui/providers/connectivity_provider.dart';
 import 'package:derpiviewer/ui/providers/favorites_provider.dart';
 import 'package:derpiviewer/ui/providers/search_provider.dart';
 import 'package:derpiviewer/ui/providers/trending_provider.dart';
@@ -22,6 +23,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ConnectivityProvider>(
+          create: (_) => ConnectivityProvider(),
+        ),
         ChangeNotifierProvider<PrefModel>(create: (context) => PrefModel()),
         ChangeNotifierProxyProvider<PrefModel, TrendingProvider>(
           create: (context) => TrendingProvider(

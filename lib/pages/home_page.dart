@@ -8,6 +8,7 @@ import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/models/pref_model.dart';
 import 'package:derpiviewer/pages/fav_page.dart';
 import 'package:derpiviewer/pages/search_page.dart';
+import 'package:derpiviewer/ui/providers/connectivity_provider.dart';
 import 'package:derpiviewer/ui/providers/favorites_provider.dart';
 import 'package:derpiviewer/ui/widgets/home_drawer.dart';
 import 'package:derpiviewer/ui/widgets/trending_scroll.dart';
@@ -26,6 +27,7 @@ class HomePage extends StatefulWidget {
 class _MyHomePageState extends State<HomePage> {
   final ReceivePort _port = ReceivePort();
   String _downloadMsg = 'Download complete';
+  bool _bannerShown = false;
 
   @override
   void didChangeDependencies() {
@@ -70,47 +72,87 @@ class _MyHomePageState extends State<HomePage> {
           DbHelper.closeDB();
           return true;
         },
-        child: Scaffold(
-          appBar: AppBar(
-              title: Text(
-                  "Derpiviewer (${booruHosts[Provider.of<PrefModel>(context).booru] ?? ""})")),
-          body: const TrendingScroll(),
-          drawer: const HomeDrawer(),
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton(
-                onPressed: () {
-                  Provider.of<FavoritesProvider>(context, listen: false).changeFav();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const FavouritePage()));
-                },
-                heroTag: "fav-fab",
-                tooltip: AppLocalizations.of(context)!.tooltipFavorites,
-                child: Semantics(
-                  label: AppLocalizations.of(context)!.tooltipFavorites,
-                  child: const Icon(Icons.favorite),
-                ),
+        child: Consumer<ConnectivityProvider>(
+          builder: (context, connectivity, child) {
+            // Show/hide MaterialBanner via ScaffoldMessenger for proper
+            // slide animation and dismiss support.
+            if (!connectivity.isOnline && !_bannerShown) {
+              _bannerShown = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showMaterialBanner(
+                    MaterialBanner(
+                      content: const Text(
+                          "You're offline — showing cached content."),
+                      leading:
+                          const Icon(Icons.wifi_off, color: Colors.white),
+                      backgroundColor: Colors.grey[800]!,
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context)
+                                .hideCurrentMaterialBanner();
+                            _bannerShown = false;
+                          },
+                          child: const Text('DISMISS',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              });
+            } else if (connectivity.isOnline && _bannerShown) {
+              _bannerShown = false;
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            }
+            return Scaffold(
+              appBar: AppBar(
+                  title: Text(
+                      "Derpiviewer (${booruHosts[Provider.of<PrefModel>(context).booru] ?? ""})")),
+              body: const TrendingScroll(),
+              drawer: const HomeDrawer(),
+              floatingActionButton: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () {
+                      Provider.of<FavoritesProvider>(context, listen: false)
+                          .changeFav();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const FavouritePage()));
+                    },
+                    heroTag: "fav-fab",
+                    tooltip: AppLocalizations.of(context)!.tooltipFavorites,
+                    child: Semantics(
+                      label: AppLocalizations.of(context)!.tooltipFavorites,
+                      child: const Icon(Icons.favorite),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton(
+                    onPressed: connectivity.isOnline
+                        ? () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SearchPage()));
+                          }
+                        : null,
+                    heroTag: "sch-fab",
+                    tooltip: AppLocalizations.of(context)!.tooltipSearch,
+                    child: Semantics(
+                      label: AppLocalizations.of(context)!.tooltipSearch,
+                      child: const Icon(Icons.search),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              FloatingActionButton(
-                onPressed: (() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SearchPage()));
-                }),
-                heroTag: "sch-fab",
-                tooltip: AppLocalizations.of(context)!.tooltipSearch,
-                child: Semantics(
-                  label: AppLocalizations.of(context)!.tooltipSearch,
-                  child: const Icon(Icons.search),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ));
   }
 }

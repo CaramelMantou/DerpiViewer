@@ -45,8 +45,11 @@ Failure mapDioError(DioError error) {
     }
 
     if (statusCode == 403 || statusCode == 401) {
+      final message = statusCode == 403
+          ? 'API key invalid or expired'
+          : 'Authentication required ($statusCode)';
       return Failure(
-        'API access denied ($statusCode)',
+        message,
         FailureType.api,
         error: error,
         stackTrace: error.stackTrace,

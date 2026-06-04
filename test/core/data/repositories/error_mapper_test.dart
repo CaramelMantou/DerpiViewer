@@ -81,7 +81,7 @@ void main() {
       );
       final failure = mapDioError(error);
       expect(failure.type, FailureType.api);
-      expect(failure.message, contains('403'));
+      expect(failure.message, contains('API key invalid'));
     });
 
     test('401 response maps to FailureType.api', () {

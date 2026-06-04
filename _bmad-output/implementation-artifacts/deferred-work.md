@@ -52,3 +52,12 @@
 - AppLocalizations in async callbacks — toolbar.dart uses AppLocalizations.of(context)! inside onTap/onPressed callbacks with potentially stale context. Pre-existing pattern. [`lib/widgets/toolbar.dart`]
 - Stale slider label during drag — ChangeSlideIntervalDialog StatelessWidget doesn't rebuild on slider changes. Pre-existing UX. [`lib/ui/widgets/dialogs/slideshow_dialog.dart`]
 - Minimal l10n test coverage — Test only checks widget existence, not localized string content. Nice-to-have improvement. [`test/ui/widgets/gallery_toolbar_scrim_test.dart`]
+
+## Deferred from: code review of 3-4-bug-fixes-booru-switch-api-key-uploader-offline (2026-06-05)
+
+- Dio import in domain layer — `package:dio/dio.dart` imported in domain interface for CancelToken; architectural refactoring needed to avoid coupling. [`lib/core/domain/repositories/image_repository.dart:1`]
+- Duplicated API-key snackbar logic — identical `_apiSnackbarShown` + `_showApiKeySnackbar` in ResultPage and TrendingScroll; should be extracted to shared helper. [`lib/pages/result_page.dart`, `lib/ui/widgets/trending_scroll.dart`]
+- ConnectivityProvider async in constructor — `_init()` fires async `checkConnectivity()` without await; potential timing gap if platform resolves synchronously. [`lib/ui/providers/connectivity_provider.dart:16-17`]
+- GestureDetector touch target below 48dp — uploader name tap area at ~22dp with fontSize 18; fails Material Design minimum 48x48dp accessibility requirement. [`lib/widgets/detail.dart:63-78`]
+- SearchProvider lacks CancelToken — user-initated searches not cancelled on booru switch; by design per dev notes (only TrendingProvider handles booru-switch cancellation). [`lib/ui/providers/search_provider.dart:99`]
+- Consumer\<ConnectivityProvider\> rebuilds entire Scaffold — connectivity change triggers unnecessary full Scaffold rebuild including AppBar/Drawer/FABs. [`lib/pages/home_page.dart:74`]

@@ -4,11 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:derpiviewer/config/constants.dart';
 import 'package:derpiviewer/core/domain/entities/image_entity.dart';
 import 'package:derpiviewer/core/domain/enums/image_size.dart';
+import 'package:derpiviewer/core/domain/failure_type.dart';
 import 'package:derpiviewer/core/domain/view_state.dart';
 import 'package:derpiviewer/helpers/cache_helper.dart';
 import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:derpiviewer/pages/search_page.dart';
 import 'package:derpiviewer/ui/providers/trending_provider.dart';
+import 'package:derpiviewer/ui/widgets/dialogs/api_key_dialog.dart';
 import 'package:derpiviewer/ui/widgets/error_view.dart';
 import 'package:derpiviewer/ui/widgets/skeleton_grid.dart';
 import 'package:derpiviewer/widgets/image_grid.dart';
@@ -23,6 +25,7 @@ class TrendingScroll extends StatefulWidget {
 
 class _TrendingScrollState extends State<TrendingScroll> {
   late ScrollController _scrollController;
+  bool _apiSnackbarShown = false;
 
   @override
   void initState() {
@@ -81,6 +84,25 @@ class _TrendingScrollState extends State<TrendingScroll> {
           },
         ),
         duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  void _showApiKeySnackbar(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: const Text('API key rejected. Update it in Settings.'),
+        action: SnackBarAction(
+          label: 'Settings',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => const ChangeKeyDialog(),
+            );
+          },
+        ),
+        duration: const Duration(seconds: 6),
       ),
     );
   }
@@ -159,16 +181,29 @@ class _TrendingScrollState extends State<TrendingScroll> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: switch (trending.state) {
-        LoadingState() => const SkeletonGrid(),
-        SuccessState(data: final images) =>
-          _buildSuccessGrid(trending, images),
-        FailureState(message: final msg) => SliverFillRemaining(
-            key: const ValueKey('error_view'),
-            child: ErrorView(
-              message: msg,
-              onRetry: () => trending.fetchMore(refresh: true),
-            ),
-          ),
+        LoadingState() => () {
+            _apiSnackbarShown = false;
+            return const SkeletonGrid();
+          }(),
+        SuccessState(data: final images) => () {
+            _apiSnackbarShown = false;
+            return _buildSuccessGrid(trending, images);
+          }(),
+        FailureState(message: final msg, type: final type) => () {
+            if (type == FailureType.api && !_apiSnackbarShown) {
+              _apiSnackbarShown = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _showApiKeySnackbar(context);
+              });
+            }
+            return SliverFillRemaining(
+              key: const ValueKey('error_view'),
+              child: ErrorView(
+                message: msg,
+                onRetry: () => trending.fetchMore(refresh: true),
+              ),
+            );
+          }(),
       },
     );
   }
