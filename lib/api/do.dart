@@ -51,43 +51,6 @@ class ImageResponse {
       this.faves,
       this.uploader,
       this.sourceUrls);
-  ImageResponse.fromJson(Map<String, dynamic> obj, Booru booru) {
-    id = obj["id"];
-    this.booru = booru;
-    fullUrl = obj["representations"]["full"];
-    smallUrl = obj["representations"]["small"];
-    mediumUrl = obj["representations"]["medium"];
-    largeUrl = obj["representations"]["large"];
-    thumbUrl = obj["representations"]["thumb"];
-    thumbSmallUrl = obj["representations"]["thumb_small"];
-    thumbTinyUrl = obj["representations"]["thumb_tiny"];
-    if (obj["format"] == "webm" || obj["format"] == "mp4") {
-      thumbUrl = thumbUrl.replaceFirst(".webm", ".gif");
-      thumbSmallUrl = thumbSmallUrl.replaceFirst(".webm", ".gif");
-      thumbTinyUrl = thumbTinyUrl.replaceFirst(".webm", ".gif");
-    }
-    if (fullUrl[0] == "/") {
-      fullUrl = "https://ponerpics.org/$fullUrl";
-      smallUrl = "https://ponerpics.org/$smallUrl";
-      mediumUrl = "https://ponerpics.org/$mediumUrl";
-      largeUrl = "https://ponerpics.org/$largeUrl";
-      thumbUrl = "https://ponerpics.org/$thumbUrl";
-      thumbSmallUrl = "https://ponerpics.org/$thumbSmallUrl";
-      thumbTinyUrl = "https://ponerpics.org/$thumbTinyUrl";
-    }
-    format = ContentFormat.values[formatExtensions.indexOf(obj["format"])];
-    tags = List<String>.from(obj["tags"]);
-    tagids = List<int>.from(obj["tag_ids"]);
-    description = obj["description"];
-    createdAt = obj["created_at"];
-    duration = obj["duration"];
-    upvotes = obj["upvotes"];
-    downvotes = obj["downvotes"];
-    comments = obj["comment_count"];
-    faves = obj["faves"];
-    uploader = obj["uploader"] ?? "";
-    sourceUrls = List<String>.from(obj["source_urls"] ?? []);
-  }
   ImageResponse.fromEntity(
       {required int id,
       required Booru booru,
