@@ -14,9 +14,9 @@ import 'package:synchronized/synchronized.dart';
 
 class GalleryToolBar extends StatelessWidget {
   final SearchInterface model;
-  int index;
-  ToolbarController controller;
-  FavIconController favController = FavIconController();
+  final int index;
+  final ToolbarController controller;
+  final FavIconController favController = FavIconController();
   final Lock _toggleLock = Lock();
   GalleryToolBar(
       {super.key,

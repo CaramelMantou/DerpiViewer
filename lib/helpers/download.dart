@@ -73,7 +73,6 @@ class DownloadHelper {
       case Booru.mane:
         bs = "Manebooru";
         break;
-      default:
     }
     log("$downloadpath/DerpiViewer/$bs/$id.$type");
     await FlutterDownloader.enqueue(
@@ -120,20 +119,19 @@ class DownloadHelper {
       case Booru.mane:
         bs = "Manebooru";
         break;
-      default:
     }
     var file = await DefaultCacheManager().getSingleFile(uri);
 
     // var response = await http.get(Uri.parse(uri));
     // Uint8List bytes = response.bodyBytes;
 
-    ShareResult result = await Share.shareXFiles([
-      XFile(file.path,
-          name: "$bs-$id.${formatExtensions[type.index]}",
-          mimeType: mimeTypes[type.index])
-    ]);
-    if (result.status == ShareResultStatus.success) {
-      Fluttertoast.showToast(msg: "Shared");
-    }
+    await SharePlus.instance.share(ShareParams(
+      files: [
+        XFile(file.path,
+            name: "$bs-$id.${formatExtensions[type.index]}",
+            mimeType: mimeTypes[type.index])
+      ],
+    ));
+    Fluttertoast.showToast(msg: "Shared");
   }
 }

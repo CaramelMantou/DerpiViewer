@@ -12,8 +12,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailSheet extends StatefulWidget {
-  ImageResponse image;
-  DetailSheet({super.key, required this.image});
+  final ImageResponse image;
+  const DetailSheet({super.key, required this.image});
 
   @override
   State<DetailSheet> createState() => _DetailSheetState();

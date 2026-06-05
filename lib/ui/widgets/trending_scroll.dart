@@ -137,79 +137,93 @@ class _TrendingScrollState extends State<TrendingScroll> {
   }
 
   Widget _buildFeaturedBanner(TrendingProvider trending) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: SliverList(
-        key: ValueKey(trending.featuredState.runtimeType),
-        delegate: SliverChildListDelegate([
-          switch (trending.featuredState) {
-            LoadingState() => const _FeaturedSkeleton(),
-            SuccessState(data: final image) => GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchPage(
-                      initQuery: 'id:${image.id}',
-                    ),
+    return SliverToBoxAdapter(
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: switch (trending.featuredState) {
+          LoadingState() => const _FeaturedSkeleton(
+              key: ValueKey('featured_loading')),
+          SuccessState(data: final image) => GestureDetector(
+              key: const ValueKey('featured_success'),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchPage(
+                    initQuery: 'id:${image.id}',
                   ),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: image.urlForSize(ImageSize.medium) ??
-                      fallbackImg,
-                  fit: BoxFit.cover,
-                  cacheManager: ImageCacheManager(),
                 ),
               ),
-            FailureState() => GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SearchPage(
-                      initQuery: 'id:1',
-                    ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: CachedNetworkImage(
+                  imageUrl:
+                      image.urlForSize(ImageSize.medium) ?? fallbackImg,
+                  fit: BoxFit.cover,
+                  cacheManager: ImageCacheManager(),
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.broken_image,
+                    size: 64,
+                    color: Colors.grey,
                   ),
                 ),
+              ),
+            ),
+          FailureState() => GestureDetector(
+              key: const ValueKey('featured_failure'),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    initQuery: 'id:1',
+                  ),
+                ),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 200,
                 child: CachedNetworkImage(
                   imageUrl: fallbackImg,
                   fit: BoxFit.cover,
                   cacheManager: ImageCacheManager(),
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.broken_image,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
-          },
-        ]),
+            ),
+        },
       ),
     );
   }
 
   Widget _buildGrid(TrendingProvider trending) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: switch (trending.state) {
-        LoadingState() => () {
-            _apiSnackbarShown = false;
-            return const SkeletonGrid();
-          }(),
-        SuccessState(data: final images) => () {
-            _apiSnackbarShown = false;
-            return _buildSuccessGrid(trending, images);
-          }(),
-        FailureState(message: final msg, type: final type) => () {
-            if (type == FailureType.api && !_apiSnackbarShown) {
-              _apiSnackbarShown = true;
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) _showApiKeySnackbar(context);
-              });
-            }
-            return SliverFillRemaining(
-              key: const ValueKey('error_view'),
-              child: ErrorView(
-                message: msg,
-                onRetry: () => trending.fetchMore(refresh: true),
-              ),
-            );
-          }(),
-      },
-    );
+    switch (trending.state) {
+      case LoadingState():
+        _apiSnackbarShown = false;
+        return const SliverToBoxAdapter(
+          child: SkeletonGrid(key: ValueKey('skeleton_grid')),
+        );
+      case SuccessState(data: final images):
+        _apiSnackbarShown = false;
+        return _buildSuccessGrid(trending, images);
+      case FailureState(message: final msg, type: final type):
+        if (type == FailureType.api && !_apiSnackbarShown) {
+          _apiSnackbarShown = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _showApiKeySnackbar(context);
+          });
+        }
+        return SliverFillRemaining(
+          key: const ValueKey('error_view'),
+          child: ErrorView(
+            message: msg,
+            onRetry: () => trending.fetchMore(refresh: true),
+          ),
+        );
+    }
   }
 
   Widget _buildSuccessGrid(TrendingProvider trending, List<ImageEntity> images) {
@@ -226,7 +240,7 @@ class _TrendingScrollState extends State<TrendingScroll> {
 }
 
 class _FeaturedSkeleton extends StatelessWidget {
-  const _FeaturedSkeleton();
+  const _FeaturedSkeleton({super.key});
   @override
   Widget build(BuildContext context) {
     return Container(

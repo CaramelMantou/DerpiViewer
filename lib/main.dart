@@ -56,24 +56,45 @@ void main() async {
   );
 }
 
-class DVApp extends StatelessWidget {
+class DVApp extends StatefulWidget {
   const DVApp({Key? key}) : super(key: key);
+
+  @override
+  State<DVApp> createState() => _DVAppState();
+}
+
+class _DVAppState extends State<DVApp> {
+  late final PrefModel _prefModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefModel = context.read<PrefModel>();
+    _prefModel.addListener(_onPrefChanged);
+  }
+
+  @override
+  void dispose() {
+    _prefModel.removeListener(_onPrefChanged);
+    super.dispose();
+  }
+
+  void _onPrefChanged() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<PrefModel>(
-      builder: (context, prefModel, child) {
-        return MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          title: 'Derpiviewer',
-          theme: AppTheme.defaultTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: prefModel.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          themeAnimationDuration: const Duration(milliseconds: 300),
-          themeAnimationCurve: Curves.easeInOut,
-          home: const HomePage(),
-        );
-      },
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      title: 'Derpiviewer',
+      theme: AppTheme.defaultTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: _prefModel.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      themeAnimationDuration: const Duration(milliseconds: 300),
+      themeAnimationCurve: Curves.easeInOut,
+      home: const HomePage(),
     );
   }
 }

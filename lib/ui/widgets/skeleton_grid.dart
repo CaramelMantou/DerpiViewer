@@ -19,6 +19,7 @@ class _SkeletonGridState extends State<SkeletonGrid>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
+  late Widget _gridChild;
 
   @override
   void initState() {
@@ -30,6 +31,39 @@ class _SkeletonGridState extends State<SkeletonGrid>
 
     _animation = Tween<double>(begin: 0.3, end: 0.8).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _gridChild = _buildGrid();
+  }
+
+  @override
+  void didUpdateWidget(covariant SkeletonGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.columnCount != oldWidget.columnCount ||
+        widget.count != oldWidget.count) {
+      _gridChild = _buildGrid();
+    }
+  }
+
+  Widget _buildGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(7.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: widget.columnCount,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 7.0,
+        crossAxisSpacing: 7.0,
+      ),
+      itemCount: widget.count,
+      itemBuilder: (context, index) {
+        final color = _ShimmerColor.of(context);
+        return Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        );
+      },
     );
   }
 
@@ -56,25 +90,7 @@ class _SkeletonGridState extends State<SkeletonGrid>
           child: child!,
         );
       },
-      child: GridView.builder(
-        padding: const EdgeInsets.all(7.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: widget.columnCount,
-          childAspectRatio: 1.0,
-          mainAxisSpacing: 7.0,
-          crossAxisSpacing: 7.0,
-        ),
-        itemCount: widget.count,
-        itemBuilder: (context, index) {
-          final color = _ShimmerColor.of(context);
-          return Container(
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          );
-        },
-      ),
+      child: _gridChild,
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FavIcon extends StatefulWidget {
-  FavIconController controller;
-  FavIcon({super.key, required this.controller});
+  final FavIconController controller;
+  const FavIcon({super.key, required this.controller});
   @override
-  _FavIconState createState() => _FavIconState();
+  State<FavIcon> createState() => _FavIconState();
 }
 
 class _FavIconState extends State<FavIcon> {

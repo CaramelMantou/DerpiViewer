@@ -40,7 +40,6 @@ class _MyHomePageState extends State<HomePage> {
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
-      String id = data[0];
       DownloadTaskStatus status = DownloadTaskStatus.fromInt(data[1]);
       int progress = data[2];
       if (status == DownloadTaskStatus.complete) {
@@ -66,11 +65,12 @@ class _MyHomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async {
+    return PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (!didPop) return;
           await Provider.of<PrefModel>(context, listen: false).savePref();
           DbHelper.closeDB();
-          return true;
         },
         child: Consumer<ConnectivityProvider>(
           builder: (context, connectivity, child) {

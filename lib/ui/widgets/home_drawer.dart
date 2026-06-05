@@ -5,7 +5,6 @@ import 'package:derpiviewer/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:derpiviewer/ui/widgets/dialogs/about_dialog.dart';
-import 'package:derpiviewer/ui/widgets/dialogs/api_key_dialog.dart';
 import 'package:derpiviewer/ui/widgets/dialogs/booru_dialog.dart';
 import 'package:derpiviewer/ui/widgets/dialogs/cache_dialog.dart';
 import 'package:derpiviewer/ui/widgets/dialogs/download_prefs_dialog.dart';
