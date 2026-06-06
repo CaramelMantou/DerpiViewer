@@ -1,5 +1,13 @@
 # Deferred Work
 
+## Deferred from: review of favorite-tags-search-page-chips (2026-06-06)
+
+- No loading indicator during addTag dialog submission — dialog buttons show no progress feedback. Low UX impact (DB ops are near-instant). [`lib/ui/widgets/dialogs/add_favorite_tag_dialog.dart`] — **Addressed in patch:** now shows `CircularProgressIndicator` on OK button while submitting.
+- SQLite `getAllFavoriteTags` has no `ORDER BY` — tag chip order is undefined across app restarts. Pre-existing in data layer; deferred to future refinement. [`lib/helpers/db.dart:148`]
+- `_favoriteTags` list never refreshed after returning from ResultPage — initState only runs once. Tags added elsewhere won't appear until page is recreated. Low impact for single-user app. [`lib/pages/search_page.dart:36`]
+- Long-press chip delete has no haptic feedback or confirmation dialog — irreversible on accidental long-press. Medium UX concern. [`lib/pages/search_page.dart:223`]
+- DB operations in `DbHelper` silently swallow exceptions with bare `initDB()` recovery — pre-existing pattern in all DbHelper methods. [`lib/helpers/db.dart:122-154`]
+
 ## Deferred from: code review of 1-1-di-container-enums-sealed-classes (2026-06-04)
 
 - SearchModel._fetchResult shadows `over` class field causing infinite API calls — `lib/models/search_model.dart:36`. Local variable `bool over` shadows `this.over`. Remove local declaration; operate on class field directly.

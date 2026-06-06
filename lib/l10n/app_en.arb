@@ -90,5 +90,11 @@
   "tooltipSlideshowPause": "Pause slideshow",
   "tooltipClearField": "Clear field",
   "downloadComplete": "Download complete",
-  "trendingEmpty": "No trending images available"
+  "trendingEmpty": "No trending images available",
+  "searchFavoriteTagsTitle": "Favorite Tags",
+  "searchFavoriteTagsEmpty": "No favorite tags yet — tap + to add one",
+  "searchAddFavoriteTag": "Add Favorite Tag",
+  "searchAddFavoriteTagHint": "Enter tag name",
+  "searchTagAdded": "Tag added to favorites",
+  "searchTagDeleted": "Tag removed from favorites"
 }

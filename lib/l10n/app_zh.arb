@@ -101,5 +101,11 @@
   "tooltipSlideshowPause": "暂停幻灯片",
   "tooltipClearField": "清除输入",
   "downloadComplete": "下载完成",
-  "trendingEmpty": "暂无热门图片"
+  "trendingEmpty": "暂无热门图片",
+  "searchFavoriteTagsTitle": "常用标签",
+  "searchFavoriteTagsEmpty": "暂无常用标签 — 点击 + 添加",
+  "searchAddFavoriteTag": "添加常用标签",
+  "searchAddFavoriteTagHint": "输入标签名",
+  "searchTagAdded": "已添加到常用标签",
+  "searchTagDeleted": "已从常用标签中删除"
 }
