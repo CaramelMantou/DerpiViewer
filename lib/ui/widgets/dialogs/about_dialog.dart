@@ -17,7 +17,7 @@ class CustomAboutDialog extends StatelessWidget {
       ),
       child: AboutDialog(
         applicationName: 'DerpiViewer',
-        applicationVersion: '1.0.0',
+        applicationVersion: '1.1.0',
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
