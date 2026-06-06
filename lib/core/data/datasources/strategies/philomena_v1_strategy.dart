@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:derpiviewer/core/data/datasources/strategies/booru_api_strategy.dart';
 import 'package:derpiviewer/core/data/dtos/image_dto.dart';
@@ -21,11 +19,6 @@ class PhilomenaV1Strategy implements BooruApiStrategy {
       receiveTimeout: 30000,
     ));
     _dio.interceptors.addAll([
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        logPrint: (o) => log(o.toString()),
-      ),
       RetryInterceptor(dio: _dio, maxRetries: 3),
     ]);
   }

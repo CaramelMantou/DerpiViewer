@@ -11,24 +11,26 @@ class ChangeBooruDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<Booru, String> boorus = booruHosts;
-    int booruNum = boorus.length;
+    // TODO: re-enable trixie after fixing trixiebooru bugs
+    final entries = booruHosts.entries
+        .where((e) => e.key != Booru.trixie)
+        .toList();
     return SimpleDialog(
       title: Text(AppLocalizations.of(context)!.drawerBooruTitle),
       children: <Widget>[
-        for (var i = 0; i < booruNum; i++)
-          generateOption(boorus[Booru.values[i]] ?? "", context, i)
+        for (final entry in entries)
+          generateOption(entry.key, entry.value, context)
       ],
     );
   }
 
-  Widget generateOption(String text, BuildContext context, int idx) {
+  Widget generateOption(Booru booru, String text, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SimpleDialogOption(
           onPressed: () {
-            pref.changeHost(Booru.values[idx]);
+            pref.changeHost(booru);
             Fluttertoast.showToast(
                 toastLength: Toast.LENGTH_LONG,
                 msg: AppLocalizations.of(context)!
