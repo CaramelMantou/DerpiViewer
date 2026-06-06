@@ -75,17 +75,17 @@ class _FavouritePageState extends State<FavouritePage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.favorite_border,
               size: 80,
-              color: Colors.grey,
+              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.38),
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context)!.favouritesEmptyTitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
             ),
             const SizedBox(height: 8),
@@ -93,7 +93,7 @@ class _FavouritePageState extends State<FavouritePage>
               AppLocalizations.of(context)!.favouritesEmptySubtitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   ),
             ),
           ],
