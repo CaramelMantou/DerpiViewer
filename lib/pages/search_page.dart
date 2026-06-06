@@ -194,7 +194,7 @@ class _SearchPageState extends State<SearchPage> {
                 Icons.search,
                 color: _isSearchEnabled
                     ? Theme.of(context).floatingActionButtonTheme.foregroundColor
-                    : Theme.of(context).disabledColor,
+                    : Theme.of(context).iconTheme.color?.withValues(alpha: 0.38),
               ),
               onPressed:
                   _isSearchEnabled ? () => showResult(_textController.text) : null,
@@ -228,7 +228,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Text(
             l10n.searchFavoriteTagsTitle,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Theme.of(context).disabledColor,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
           ),
         ),
