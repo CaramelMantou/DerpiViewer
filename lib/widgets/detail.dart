@@ -1,5 +1,8 @@
 import 'package:derpiviewer/api/do.dart';
 import 'package:derpiviewer/config/tag_categories.dart';
+import 'package:derpiviewer/core/di/injection_container.dart';
+import 'package:derpiviewer/core/domain/repositories/favorite_tags_repository.dart';
+import 'package:derpiviewer/core/domain/result.dart';
 import 'package:derpiviewer/helpers/helper.dart';
 import 'package:derpiviewer/pages/search_page.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +26,51 @@ class _DetailSheetState extends State<DetailSheet> {
   late ImageResponse _image;
   late List<String> _tags;
   late List<int> _tagids;
+  Offset? _lastTapPosition;
   @override
   void initState() {
     _image = widget.image;
     _tags = _image.tags;
     _tagids = _image.tagids;
     super.initState();
+  }
+
+  void _showTagMenu(String tag) {
+    final l10n = AppLocalizations.of(context)!;
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        _lastTapPosition?.dx ?? offset.dx,
+        _lastTapPosition?.dy ?? offset.dy,
+        _lastTapPosition?.dx ?? offset.dx,
+        _lastTapPosition?.dy ?? offset.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'add',
+          child: Text(l10n.detailAddToFavorites),
+        ),
+        PopupMenuItem(
+          value: 'filter',
+          child: Text(l10n.detailAddAsFilter),
+        ),
+      ],
+    ).then((value) {
+      if (value == null || !mounted) return;
+      final repository = resolve<FavoriteTagsRepository>();
+      final tagToAdd = value == 'filter' ? '-$tag' : tag;
+      repository.addTag(tagToAdd).then((result) {
+        if (!mounted) return;
+        if (result is Success<void>) {
+          Fluttertoast.showToast(msg: l10n.searchTagAdded);
+        } else if (result is Failure<void>) {
+          Fluttertoast.showToast(msg: result.message);
+        }
+      });
+    });
   }
 
   @override
@@ -207,12 +249,13 @@ class _DetailSheetState extends State<DetailSheet> {
               var tc =
                   getTagCategory(_tags[index], _tagids[index], _image.booru);
               return GestureDetector(
+                  onTapDown: (d) => _lastTapPosition = d.globalPosition,
                   onTap: () {
                     appendClipboard(
                         AppLocalizations.of(context)!.toolbarCopyTag,
                         _tags[index]);
-                    // Navigator.pop(context);
                   },
+                  onLongPress: () => _showTagMenu(_tags[index]),
                   child: Chip(
                     label: Text(_tags[index],
                         style:

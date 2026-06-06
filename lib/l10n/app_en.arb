@@ -98,5 +98,7 @@
   "searchTagAdded": "Tag added to favorites",
   "searchTagDeleted": "Tag removed from favorites",
   "searchDeleteTagTitle": "Remove Favorite Tag",
-  "searchDeleteTagConfirm": "Remove this tag from favorites?"
+  "searchDeleteTagConfirm": "Remove this tag from favorites?",
+  "detailAddToFavorites": "Add to Favorite Tags",
+  "detailAddAsFilter": "Add as Filter Tag"
 }
