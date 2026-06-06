@@ -33,6 +33,7 @@ class _GalleryViewState extends State<GalleryView> {
   Timer? slideshowTimer;
   final Lock _loadLock = Lock(); // 替换_isLoadingMore的锁
   final Map<int, int> _retryCounts = {};
+  int _preloadGeneration = 0;
 
   @override
   void initState() {
@@ -153,10 +154,37 @@ class _GalleryViewState extends State<GalleryView> {
       last = currentPageIndex;
       log('当前页面索引: $currentPageIndex');
       _toolbarController.change(currentPageIndex);
+      _preloadNextImage(currentPageIndex);
     }
     // 检查是否到达最后一张图片
     if (currentPageIndex == _model.getItemCount() - 1) {
       _loadMoreItems();
+    }
+  }
+
+  Future<void> _preloadNextImage(int currentIndex) async {
+    final nextIndex = currentIndex + 1;
+    if (nextIndex >= _model.getItemCount()) return;
+
+    final gen = ++_preloadGeneration;
+
+    try {
+      final format = _model.getItemFormat(nextIndex);
+      if (format == ContentFormat.webm || format == ContentFormat.mp4) return;
+
+      final url = _model.getItemUrl(nextIndex, _model.getPref().imageSize);
+      if (url.isEmpty) return;
+
+      if (!mounted) return;
+      await precacheImage(
+        CachedNetworkImageProvider(url, cacheManager: ImageCacheManager()),
+        context,
+      );
+      // Stale check — if a newer preload started while this one was in flight,
+      // silently discard this result
+      if (gen != _preloadGeneration) return;
+    } on Exception {
+      // Silent — preload failures are non-critical
     }
   }
 

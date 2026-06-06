@@ -80,3 +80,9 @@
 - Integration test skeletons empty — `IntegrationTestWidgetsFlutterBinding` wired but bodies are comments; full flow requires mock HTTP infrastructure (future work). [`integration_test/`]
 - `PrefModel.getPref()` never awaited in constructor or tests — reads fields before async init completes; works by coincidence with mock SharedPreferences. [`lib/models/pref_model.dart:45-47`]
 - `currentPage` set redundantly in both `onPrefsChanged` and `fetchMore` — double source-of-truth; harmless but fragile for future refactoring. [`lib/ui/providers/trending_provider.dart:49,81-82`]
+
+## Deferred from: review of image-preload-fullscreen (2026-06-06)
+
+- `ImageCacheManager()` instantiated per-use (not singleton) — each `CachedNetworkImage` and `CachedNetworkImageProvider` construction creates a new CacheManager instance, potentially opening redundant SQLite connections to the same cache file. Pre-existing pattern across gallery, grid, trending, and drawer. Low practical impact due to flutter_cache_manager internal connection pooling. [`lib/helpers/cache_helper.dart`, `lib/pages/gallery.dart`, `lib/widgets/image_grid.dart`, `lib/ui/widgets/trending_scroll.dart`]
+- No initial preload on gallery open — `_handlePageChange` guard (`currentPageIndex != last`) prevents preloading the adjacent image when the gallery first opens. First swipe always shows a loading spinner. Future iteration could call `_preloadNextImage` explicitly in `initState` after the first frame. [`lib/pages/gallery.dart:153-158`]
+- `CachedNetworkImageProvider` preload path may diverge from widget-level `CachedNetworkImage` configuration — if custom HTTP headers (e.g., auth tokens, referrer) are added to `CachedNetworkImage` in the future, the independent `CachedNetworkImageProvider` construction in `_preloadNextImage` would not pick them up. Currently no custom headers configured. [`lib/pages/gallery.dart:179`]
