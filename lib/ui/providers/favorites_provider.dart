@@ -108,8 +108,8 @@ class FavoritesProvider extends ChangeNotifier implements SearchInterface {
   // ---------------------------------------------------------------------------
 
   @override
-  void fetchMore({bool refresh = false}) {
-    unawaited(_fetchResult(refresh: refresh));
+  Future<void> fetchMore({bool refresh = false}) {
+    return _fetchResult(refresh: refresh);
   }
 
   @override

@@ -16,7 +16,7 @@ abstract class SearchInterface {
   ContentFormat getItemFormat(int index);
   String getItemMediumThumbUrl(int index);
   String getItemThumbUrl(int index);
-  void fetchMore({bool refresh});
+  Future<void> fetchMore({bool refresh});
   Booru getBooru();
   PrefModel getPref();
 }

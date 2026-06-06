@@ -14,8 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
-import 'package:synchronized/synchronized.dart';
-
 class GalleryView extends StatefulWidget {
   final SearchInterface model;
   final int startIndex;
@@ -31,7 +29,7 @@ class _GalleryViewState extends State<GalleryView> {
   late int last;
   bool isSlideshowPlaying = false;
   Timer? slideshowTimer;
-  final Lock _loadLock = Lock(); // 替换_isLoadingMore的锁
+  bool _isLoadingMore = false;
   final Map<int, int> _retryCounts = {};
   int _preloadGeneration = 0;
 
@@ -189,21 +187,15 @@ class _GalleryViewState extends State<GalleryView> {
   }
 
   Future<void> _loadMoreItems() async {
-    if (!_loadLock.locked) {
-      await _loadLock.synchronized(() async {
-        if (_pageController.page?.round() != _model.getItemCount() - 1) {
-          return;
-        }
-        try {
-          _model.fetchMore();
-        } finally {
-          if (mounted) {
-            setState(() {});
-          }
-        }
-      });
-    } else {
-      log("cannot lock");
+    if (_isLoadingMore) return;
+    _isLoadingMore = true;
+    try {
+      await _model.fetchMore();
+    } finally {
+      _isLoadingMore = false;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }
