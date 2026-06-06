@@ -1,7 +1,10 @@
 import 'package:get_it/get_it.dart';
+import 'package:derpiviewer/core/data/datasources/favorite_tags_local_source.dart';
 import 'package:derpiviewer/core/data/datasources/favorites_local_source.dart';
+import 'package:derpiviewer/core/data/repositories/favorite_tags_repository_impl.dart';
 import 'package:derpiviewer/core/data/repositories/favorites_repository_impl.dart';
 import 'package:derpiviewer/core/data/repositories/image_repository_impl.dart';
+import 'package:derpiviewer/core/domain/repositories/favorite_tags_repository.dart';
 import 'package:derpiviewer/core/domain/repositories/favorites_repository.dart';
 import 'package:derpiviewer/core/domain/repositories/image_repository.dart';
 
@@ -25,6 +28,9 @@ Future<void> configureDependencies() async {
   _getIt.registerLazySingleton<FavoritesLocalSource>(
     () => FavoritesLocalSource(),
   );
+  _getIt.registerLazySingleton<FavoriteTagsLocalSource>(
+    () => FavoriteTagsLocalSource(),
+  );
 
   // Repository implementations
   _getIt.registerLazySingleton<ImageRepository>(
@@ -32,5 +38,8 @@ Future<void> configureDependencies() async {
   );
   _getIt.registerLazySingleton<FavoritesRepository>(
     () => FavoritesRepositoryImpl(_getIt<FavoritesLocalSource>()),
+  );
+  _getIt.registerLazySingleton<FavoriteTagsRepository>(
+    () => FavoriteTagsRepositoryImpl(_getIt<FavoriteTagsLocalSource>()),
   );
 }

@@ -48,6 +48,14 @@ class DbHelper {
         ''');
       },
     );
+    // Create favorite_tags unconditionally — handles both fresh installs
+    // (onCreate above) and existing v1 upgrades (onCreate never re-fires).
+    await database.execute('''
+      CREATE TABLE IF NOT EXISTS favorite_tags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tag VARCHAR(256) UNIQUE NOT NULL
+      )
+    ''');
   }
 
   static Future<List<ImageResponse>> getFavorites(
@@ -105,6 +113,54 @@ class DbHelper {
       } else {
         return false;
       }
+    } catch (e) {
+      await initDB();
+      return false;
+    }
+  }
+
+  static Future<void> addFavoriteTag(String tag) async {
+    try {
+      await database.insert(
+        "favorite_tags",
+        {"tag": tag},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    } catch (e) {
+      await initDB();
+    }
+  }
+
+  static Future<void> removeFavoriteTag(String tag) async {
+    try {
+      await database.delete(
+        "favorite_tags",
+        where: "tag = ?",
+        whereArgs: [tag],
+      );
+    } catch (e) {
+      await initDB();
+    }
+  }
+
+  static Future<List<String>> getAllFavoriteTags() async {
+    try {
+      final rows = await database.query("favorite_tags", columns: ["tag"]);
+      return rows.map((row) => row["tag"] as String).toList(growable: false);
+    } catch (e) {
+      await initDB();
+      return [];
+    }
+  }
+
+  static Future<bool> isFavoriteTag(String tag) async {
+    try {
+      final rows = await database.query(
+        "favorite_tags",
+        where: "tag = ?",
+        whereArgs: [tag],
+      );
+      return rows.isNotEmpty;
     } catch (e) {
       await initDB();
       return false;
