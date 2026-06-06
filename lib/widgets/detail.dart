@@ -26,7 +26,6 @@ class _DetailSheetState extends State<DetailSheet> {
   late ImageResponse _image;
   late List<String> _tags;
   late List<int> _tagids;
-  Offset? _lastTapPosition;
   @override
   void initState() {
     _image = widget.image;
@@ -37,39 +36,62 @@ class _DetailSheetState extends State<DetailSheet> {
 
   void _showTagMenu(String tag) {
     final l10n = AppLocalizations.of(context)!;
-    final renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-    final offset = renderBox.localToGlobal(Offset.zero);
-    showMenu<String>(
+    showModalBottomSheet(
       context: context,
-      position: RelativeRect.fromLTRB(
-        _lastTapPosition?.dx ?? offset.dx,
-        _lastTapPosition?.dy ?? offset.dy,
-        _lastTapPosition?.dx ?? offset.dx,
-        _lastTapPosition?.dy ?? offset.dy,
-      ),
-      items: [
-        PopupMenuItem(
-          value: 'add',
-          child: Text(l10n.detailAddToFavorites),
-        ),
-        PopupMenuItem(
-          value: 'filter',
-          child: Text(l10n.detailAddAsFilter),
-        ),
-      ],
-    ).then((value) {
-      if (value == null || !mounted) return;
-      final repository = resolve<FavoriteTagsRepository>();
-      final tagToAdd = value == 'filter' ? '-$tag' : tag;
-      repository.addTag(tagToAdd).then((result) {
-        if (!mounted) return;
-        if (result is Success<void>) {
-          Fluttertoast.showToast(msg: l10n.searchTagAdded);
-        } else if (result is Failure<void>) {
-          Fluttertoast.showToast(msg: result.message);
-        }
-      });
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _addToFavorites(tag);
+                },
+                child: Container(
+                  height: 48,
+                  alignment: Alignment.center,
+                  child: Text(
+                    l10n.detailAddToFavorites,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _addToFavorites('-$tag');
+                },
+                child: Container(
+                  height: 48,
+                  alignment: Alignment.center,
+                  child: Text(
+                    l10n.detailAddAsFilter,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _addToFavorites(String tag) {
+    final l10n = AppLocalizations.of(context)!;
+    final repository = resolve<FavoriteTagsRepository>();
+    repository.addTag(tag).then((result) {
+      if (!mounted) return;
+      if (result is Success<void>) {
+        Fluttertoast.showToast(msg: l10n.searchTagAdded);
+      } else if (result is Failure<void>) {
+        Fluttertoast.showToast(msg: result.message);
+      }
     });
   }
 
@@ -249,7 +271,6 @@ class _DetailSheetState extends State<DetailSheet> {
               var tc =
                   getTagCategory(_tags[index], _tagids[index], _image.booru);
               return GestureDetector(
-                  onTapDown: (d) => _lastTapPosition = d.globalPosition,
                   onTap: () {
                     appendClipboard(
                         AppLocalizations.of(context)!.toolbarCopyTag,
