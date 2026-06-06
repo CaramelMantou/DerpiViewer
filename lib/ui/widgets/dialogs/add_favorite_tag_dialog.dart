@@ -73,10 +73,10 @@ class _AddFavoriteTagDialogState extends State<AddFavoriteTagDialog> {
     repository.addTag(tag).then((result) {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      if (result is Success) {
+      if (result is Success<void>) {
         Fluttertoast.showToast(msg: l10n.searchTagAdded);
         navigator.pop(tag);
-      } else if (result is Failure) {
+      } else if (result is Failure<void>) {
         Fluttertoast.showToast(msg: result.message);
       }
     });

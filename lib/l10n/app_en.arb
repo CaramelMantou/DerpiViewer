@@ -96,5 +96,7 @@
   "searchAddFavoriteTag": "Add Favorite Tag",
   "searchAddFavoriteTagHint": "Enter tag name",
   "searchTagAdded": "Tag added to favorites",
-  "searchTagDeleted": "Tag removed from favorites"
+  "searchTagDeleted": "Tag removed from favorites",
+  "searchDeleteTagTitle": "Remove Favorite Tag",
+  "searchDeleteTagConfirm": "Remove this tag from favorites?"
 }

@@ -107,5 +107,7 @@
   "searchAddFavoriteTag": "添加常用标签",
   "searchAddFavoriteTagHint": "输入标签名",
   "searchTagAdded": "已添加到常用标签",
-  "searchTagDeleted": "已从常用标签中删除"
+  "searchTagDeleted": "已从常用标签中删除",
+  "searchDeleteTagTitle": "删除常用标签",
+  "searchDeleteTagConfirm": "确定从常用标签中删除此标签？"
 }

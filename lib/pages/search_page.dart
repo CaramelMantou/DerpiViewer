@@ -59,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
       if (!mounted) return;
       if (result is Success<List<String>>) {
         setState(() {
-          _favoriteTags = result.data;
+          _favoriteTags = List<String>.from(result.data);
         });
       } else if (result is Failure<List<String>>) {
         Fluttertoast.showToast(msg: result.message);
@@ -84,8 +84,26 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  void _deleteFavoriteTag(String tag) {
+  Future<void> _deleteFavoriteTag(String tag) async {
     final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.searchDeleteTagTitle),
+        content: Text('"$tag" — ${l10n.searchDeleteTagConfirm}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.toolbarConfirmCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.toolbarConfirmOk),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
     final repository = resolve<FavoriteTagsRepository>();
     repository.removeTag(tag).then((result) {
       if (!mounted) return;
